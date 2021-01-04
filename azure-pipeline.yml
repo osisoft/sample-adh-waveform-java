@@ -5,7 +5,7 @@ trigger:
       - master
   paths:
     include:
-      - '/basic_samples/SDS/Java'
+      - '/'
 
 pr:
   branches:
@@ -13,7 +13,7 @@ pr:
       - master
   paths:
     include:
-      - '/basic_samples/SDS/Java'
+      - '/'
 
 schedules:
   - cron: '0 0 * * 0'
@@ -23,12 +23,19 @@ schedules:
         - master
     always: true
 
+resources:
+  repositories:
+  - repository: templates
+    type: github
+    name: osisoft/OSI-Samples
+    endpoint: osisoft/OSI-Samples
+
 variables:
-  - template: '/miscellaneous/build_templates/variables.yml'
+  - template: '/miscellaneous/build_templates/variables.yml@templates'
   - name: projPath
-    value: '/basic_samples/SDS/Java'
+    value: '/'
   - name: libPath
-    value: '/library_samples/Java'
+    value: '/'
   - name: CredFile
     value: config.properties
   - name: CredFileLibraryOCS
@@ -49,7 +56,7 @@ jobs:
     pool:
       vmImage: $(imageName)
     steps:
-      - template: '/miscellaneous/build_templates/config.yml'
+      - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
           fileOriginal: $(CredFile)
           fileLibrary: $(CredFileLibraryOCS)
@@ -81,7 +88,7 @@ jobs:
       name: 00-OSIManaged-Test
       demands: COMPUTERNAME -equals $(buildAgent)
     steps:
-      - template: '/miscellaneous/build_templates/config.yml'
+      - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
           fileOriginal: $(CredFile)
           fileLibrary: $(CredFileLibraryEDS)
@@ -100,6 +107,6 @@ jobs:
           testRunTitle: '$(Agent.JobName) on $(imageName)'
         displayName: 'Run tests'
 
-  - template: '/miscellaneous/build_templates/analysis.yml'
+  - template: '/miscellaneous/build_templates/analysis.yml@templates'
     parameters:
       language: java
