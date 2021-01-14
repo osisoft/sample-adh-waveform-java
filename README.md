@@ -20,7 +20,7 @@ Using VSCode, Eclipse or any IDE:
 1. Install Maven.
 1. Install the ocs_sample_library_preview to your local Maven repo using `mvn install` from `\library_samples\Java\`
 1. If you are using Eclipse, select `File` > `Import` > `Maven`> `Existing maven project` and then select the local copy.
-1. The sample is configured using the file [config.placeholder.properties](config.placeholder.properties). Before editing, rename this file to `config.properties`. This repository's `.gitignore` rules should prevent the file from ever being checked in to any fork or branch, to ensure credentials are not compromised.
+1. The sample is configured using the file [config.sample.properties](config.sample.properties). Before editing, rename this file to `config.properties`. This repository's `.gitignore` rules should prevent the file from ever being checked in to any fork or branch, to ensure credentials are not compromised.
 1. Replace the configuration strings in `config.properties`
 
 Using a command line:
@@ -371,6 +371,6 @@ ocsClient.Types.deleteType(tenantId, namespaceId, sampleTypeId);
 
 Tested against Maven 3.6.1 and Java 1.8.0_212.
 
-For the general steps or switch languages see the Task [ReadMe](../../)  
-For the main OCS page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS)  
-For the main samples page on master [ReadMe](https://github.com/osisoft/OSI-Samples)
+For the main OCS waveform samples page on master [ReadMe](https://github.com/osisoft/OSI-Samples-OCS/blob/master/docs/SDS_WAVEFORM_README.md)  
+For the main OCS samples page on master [ReadMe](https://github.com/osisoft/OSI-Samples-OCS)  
+For the main OSIsoft samples page on master [ReadMe](https://github.com/osisoft/OSI-Samples)
