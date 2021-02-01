@@ -39,7 +39,7 @@ variables:
   - name: projPath
     value: '/'
   - name: libPath
-    value: '/lib/'
+    value: '/lib'
   - name: CredFile
     value: config.properties
   - name: CredFileLibraryOCS
@@ -96,6 +96,8 @@ jobs:
       demands: COMPUTERNAME -equals $(buildAgent)
     steps:
       - checkout: library
+        path: $(Build.SourcesDirectory)$(libPath)/
+        
       - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
           fileOriginal: $(CredFile)
