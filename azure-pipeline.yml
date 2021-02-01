@@ -61,7 +61,7 @@ jobs:
       vmImage: $(imageName)
     steps:
       - checkout: library
-        path: libPath
+        path: $(Build.SourcesDirectory)$(libPath)/
 
       - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
