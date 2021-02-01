@@ -78,7 +78,7 @@ jobs:
           cleanDestinationDirectory: false
 
       - script: mvn install -f pom.xml
-        workingDirectory: $(libPath)/
+        workingDirectory: $(Build.SourcesDirectory)/$(libPath)/
         displayName: 'Maven install library'
 
       - task: Maven@3
@@ -105,7 +105,7 @@ jobs:
           filePath: $(projPath)
 
       - script: mvn install -f pom.xml
-        workingDirectory: $(libPath)/
+        workingDirectory: $(Build.SourcesDirectory)/$(libPath)/
         displayName: 'Maven install library'
 
       - task: Maven@3
