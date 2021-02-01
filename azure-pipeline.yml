@@ -39,7 +39,7 @@ variables:
   - name: projPath
     value: '/'
   - name: libPath
-    value: '/@library'
+    value: '/pom.xml@library'
   - name: CredFile
     value: config.properties
   - name: CredFileLibraryOCS
