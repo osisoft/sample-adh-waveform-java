@@ -61,7 +61,7 @@ jobs:
       vmImage: $(imageName)
     steps:
       - checkout: library
-        path: $(Build.SourcesDirectory)$(libPath)/
+        path: $(libPath)
 
       - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
@@ -78,7 +78,7 @@ jobs:
           cleanDestinationDirectory: false
 
       - script: mvn install -f pom.xml
-        workingDirectory: $(Build.SourcesDirectory)$(libPath)/
+        workingDirectory: $(libPath)/
         displayName: 'Maven install library'
 
       - task: Maven@3
@@ -96,7 +96,7 @@ jobs:
       demands: COMPUTERNAME -equals $(buildAgent)
     steps:
       - checkout: library
-        path: $(Build.SourcesDirectory)$(libPath)/
+        path: $(libPath)/
 
       - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
@@ -105,7 +105,7 @@ jobs:
           filePath: $(projPath)
 
       - script: mvn install -f pom.xml
-        workingDirectory: $(Build.SourcesDirectory)$(libPath)/
+        workingDirectory: $(libPath)/
         displayName: 'Maven install library'
 
       - task: Maven@3
