@@ -39,7 +39,7 @@ variables:
   - name: projPath
     value: '/'
   - name: libPath
-    value: 'lib/'
+    value: '/lib'
   - name: CredFile
     value: config.properties
   - name: CredFileLibraryOCS
@@ -60,8 +60,10 @@ jobs:
     pool:
       vmImage: $(imageName)
     steps:
+      - checkout: self
+        path: 's'
       - checkout: library
-        path: $(libPath)
+        path: 's/lib'
 
       - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
@@ -78,7 +80,7 @@ jobs:
           cleanDestinationDirectory: false
 
       - script: mvn install -f pom.xml
-        workingDirectory: $(Build.SourcesDirectory)/$(libPath)/
+        workingDirectory: $(Build.SourcesDirectory)$(libPath)/
         displayName: 'Maven install library'
 
       - task: Maven@3
@@ -95,8 +97,10 @@ jobs:
       name: 00-OSIManaged-Test
       demands: COMPUTERNAME -equals $(buildAgent)
     steps:
+      - checkout: self
+        path: 's'
       - checkout: library
-        path: $(libPath)/
+        path: 's/lib'
 
       - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
@@ -105,7 +109,7 @@ jobs:
           filePath: $(projPath)
 
       - script: mvn install -f pom.xml
-        workingDirectory: $(Build.SourcesDirectory)/$(libPath)/
+        workingDirectory: $(Build.SourcesDirectory)$(libPath)/
         displayName: 'Maven install library'
 
       - task: Maven@3
