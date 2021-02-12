@@ -33,6 +33,11 @@ release.properties
 # PDT-specific
 .buildpath
 
+#################
+## IntelliJ
+#################
+
+*.iml
 
 #################
 ## Visual Studio

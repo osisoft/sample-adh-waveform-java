@@ -1,5 +1,11 @@
 # Version History
 
+## 1.0.16 / 2021-01-27
+
+- Updated client library dependency
+- Updated readme to point to client library repo for install instructions
+- Completed code migration from common OCS to sample-specific repo
+
 ## 1.0.15 / 2020-11-02
 
 - Updated dependencies

@@ -1,6 +1,6 @@
 # Sequential Data Store Java Sample
 
-**Version:** 1.0.15
+**Version:** 1.0.16
 
 [![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/OCS/osisoft.sample-ocs-waveform-java?repoName=osisoft%2Fsample-ocs-waveform-java&branchName=master)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2629&repoName=osisoft%2Fsample-ocs-waveform-java&branchName=master)
 
@@ -14,36 +14,14 @@ Developed against Maven 3.6.1 and Java 1.8.0_181.
 
 ## Summary of steps to run the Java demo
 
-Using VSCode, Eclipse or any IDE:
-
 1. Clone a local copy of the GitHub repository.
-1. Install Maven.
-1. Install the ocs_sample_library_preview to your local Maven repo using `mvn install` from `\library_samples\Java\`
-1. If you are using Eclipse, select `File` > `Import` > `Maven`> `Existing maven project` and then select the local copy.
-1. The sample is configured using the file [config.sample.properties](config.sample.properties). Before editing, rename this file to `config.properties`. This repository's `.gitignore` rules should prevent the file from ever being checked in to any fork or branch, to ensure credentials are not compromised.
+1. Install the [Java Client Library](https://github.com/osisoft/sample-ocs-sample_libraries-java) (see its [readme](https://github.com/osisoft/sample-ocs-sample_libraries-java) for instructions)
+1. The sample is configured using the file [config.placeholder.properties](config.placeholder.properties). Before editing, rename this file to `config.properties`. 
+   - This repository's `.gitignore` rules should prevent the file from ever being checked in to any fork or branch, to ensure credentials are not compromised.
 1. Replace the configuration strings in `config.properties`
-
-Using a command line:
-
-1. Clone a local copy of the GitHub repository.
-1. Download apache-maven-x.x.x.zip from [http://maven.apache.org](http://maven.apache.org) and extract it.
-1. Setting environment variables.
-   1. For Java JDK,  
-      Variable name - JAVA_HOME  
-      Variable value - location to the Java JDK in User variables.  
-      and, also add JDK\bin path to the Path variable in System variables.
-   1. For Maven  
-      Variable name - MAVEN_HOME  
-      Variable value - location to the extracted folder for the  
-      maven ~\apache-maven-x.x.x in User variables.  
-      and, also add ~\apache-maven-x.x.x\bin path to the Path variable in System variables.
-1. Install the ocs_sample_library_preview to your local Maven repo using: `mvn install` from `\library_samples\Java\`
-1. Replace the configuration strings in `config.properties`
-
-Building and running the project:
-
-1. cd to your project location.
-1. run `mvn package exec:java` on cmd. or `mvn test` to run the test
+1. Build and run the project:
+   1. cd to your project location.
+   1. run `mvn package exec:java` on cmd. or `mvn test` to run the test
 
 \*Currently this project is not hosted on the central Maven repo and must be compiled and installed locally.
 

@@ -25,21 +25,21 @@ schedules:
 
 resources:
   repositories:
-  - repository: templates
-    type: github
-    name: osisoft/OSI-Samples
-    endpoint: osisoft/OSI-Samples
-  - repository: library
-    type: github
-    name: osisoft/sample-ocs-sample_libraries-java
-    endpoint: osisoft/OSI-Samples
+    - repository: templates
+      type: github
+      name: osisoft/OSI-Samples
+      endpoint: osisoft/OSI-Samples
+    - repository: library
+      type: github
+      name: osisoft/sample-ocs-sample_libraries-java
+      endpoint: osisoft/OSI-Samples
 
 variables:
   - template: '/miscellaneous/build_templates/variables.yml@templates'
   - name: projPath
     value: '/'
   - name: libPath
-    value: '/'
+    value: '/lib'
   - name: CredFile
     value: config.properties
   - name: CredFileLibraryOCS
@@ -60,7 +60,11 @@ jobs:
     pool:
       vmImage: $(imageName)
     steps:
+      - checkout: self
+        path: 's'
       - checkout: library
+        path: 's/lib'
+
       - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
           fileOriginal: $(CredFile)
@@ -93,7 +97,11 @@ jobs:
       name: 00-OSIManaged-Test
       demands: COMPUTERNAME -equals $(buildAgent)
     steps:
+      - checkout: self
+        path: 's'
       - checkout: library
+        path: 's/lib'
+
       - template: '/miscellaneous/build_templates/config.yml@templates'
         parameters:
           fileOriginal: $(CredFile)
