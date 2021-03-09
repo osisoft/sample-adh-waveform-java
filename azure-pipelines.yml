@@ -2,25 +2,19 @@ trigger:
   batch: true
   branches:
     include:
-      - master
-  paths:
-    include:
-      - '/'
+      - main
 
 pr:
   branches:
     include:
-      - master
-  paths:
-    include:
-      - '/'
+      - main
 
 schedules:
   - cron: '0 0 * * 0'
     displayName: Weekly build
     branches:
       include:
-        - master
+        - main
     always: true
 
 resources:
@@ -36,10 +30,6 @@ resources:
 
 variables:
   - template: '/miscellaneous/build_templates/variables.yml@templates'
-  - name: projPath
-    value: '/'
-  - name: libPath
-    value: '/lib'
   - name: CredFile
     value: config.properties
   - name: CredFileLibraryOCS
@@ -51,14 +41,17 @@ variables:
 
 jobs:
   - job: Tests_OCS
-    strategy:
-      matrix:
-        linux:
-          imageName: ubuntu-latest
-        windows:
-          imageName: windows-latest
     pool:
-      vmImage: $(imageName)
+      name: OpsGuild
+      demands: LinuxAgentEvaluation -equals true
+    # strategy:
+    #   matrix:
+    #     linux:
+    #       imageName: ubuntu-latest
+    #     windows:
+    #       imageName: windows-latest
+    # pool:
+    #   vmImage: $(imageName)
     steps:
       - checkout: self
         path: 's'
@@ -69,7 +62,6 @@ jobs:
         parameters:
           fileOriginal: $(CredFile)
           fileLibrary: $(CredFileLibraryOCS)
-          filePath: $(projPath)
 
       - task: JavaToolInstaller@0
         inputs:
@@ -80,47 +72,46 @@ jobs:
           cleanDestinationDirectory: false
 
       - script: mvn install -f pom.xml
-        workingDirectory: $(Build.SourcesDirectory)$(libPath)/
+        workingDirectory: $(Build.SourcesDirectory)/lib
         displayName: 'Maven install library'
 
       - task: Maven@3
         inputs:
-          mavenPomFile: '$(Build.SourcesDirectory)$(projPath)/pom.xml'
+          mavenPomFile: '$(Build.SourcesDirectory)/pom.xml'
           goals: 'test'
           publishJUnitResults: true
           testResultsFiles: '**/TEST-*.xml'
-          testRunTitle: '$(Agent.JobName) on $(imageName)'
+          testRunTitle: '$(Agent.JobName) on $(Agent.OS)'
         displayName: 'Run tests'
 
-  - job: Tests_EDS
-    pool:
-      name: 00-OSIManaged-Test
-      demands: COMPUTERNAME -equals $(buildAgent)
-    steps:
-      - checkout: self
-        path: 's'
-      - checkout: library
-        path: 's/lib'
+  # - job: Tests_EDS
+  #   pool:
+  #     name: 00-OSIManaged-Test
+  #     demands: COMPUTERNAME -equals $(buildAgent)
+  #   steps:
+  #     - checkout: self
+  #       path: 's'
+  #     - checkout: library
+  #       path: 's/lib'
 
-      - template: '/miscellaneous/build_templates/config.yml@templates'
-        parameters:
-          fileOriginal: $(CredFile)
-          fileLibrary: $(CredFileLibraryEDS)
-          filePath: $(projPath)
+  #     - template: '/miscellaneous/build_templates/config.yml@templates'
+  #       parameters:
+  #         fileOriginal: $(CredFile)
+  #         fileLibrary: $(CredFileLibraryEDS)
 
-      - script: mvn install -f pom.xml
-        workingDirectory: $(Build.SourcesDirectory)$(libPath)/
-        displayName: 'Maven install library'
+  #     - script: mvn install -f pom.xml
+  #       workingDirectory: $(Build.SourcesDirectory)/lib
+  #       displayName: 'Maven install library'
 
-      - task: Maven@3
-        inputs:
-          mavenPomFile: '$(Build.SourcesDirectory)$(projPath)/pom.xml'
-          goals: 'test'
-          publishJUnitResults: true
-          testResultsFiles: '**/TEST-*.xml'
-          testRunTitle: '$(Agent.JobName) on $(imageName)'
-        displayName: 'Run tests'
+  #     - task: Maven@3
+  #       inputs:
+  #         mavenPomFile: '$(Build.SourcesDirectory)/pom.xml'
+  #         goals: 'test'
+  #         publishJUnitResults: true
+  #         testResultsFiles: '**/TEST-*.xml'
+  #         testRunTitle: '$(Agent.JobName) on $(imageName)'
+  #       displayName: 'Run tests'
 
-  - template: '/miscellaneous/build_templates/analysis.yml@templates'
-    parameters:
-      language: java
+  # - template: '/miscellaneous/build_templates/analysis.yml@templates'
+  #   parameters:
+  #     language: java

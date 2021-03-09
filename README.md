@@ -2,7 +2,7 @@
 
 **Version:** 1.0.16
 
-[![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/OCS/osisoft.sample-ocs-waveform-java?repoName=osisoft%2Fsample-ocs-waveform-java&branchName=master)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2629&repoName=osisoft%2Fsample-ocs-waveform-java&branchName=master)
+[![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/OCS/osisoft.sample-ocs-waveform-java?repoName=osisoft%2Fsample-ocs-waveform-java&branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2629&repoName=osisoft%2Fsample-ocs-waveform-java&branchName=main)
 
 The sample code described in this topic demonstrates how to use Java to store and retrieve data from SDS using only the SDS REST API. By examining the code, you will see how to establish a connection to SDS, obtain an authorization token, obtain an SdsNamespace, create an SdsType and SdsStream, and how to create, read, update, and delete values in SDS.
 
@@ -16,7 +16,7 @@ Developed against Maven 3.6.1 and Java 1.8.0_181.
 
 1. Clone a local copy of the GitHub repository.
 1. Install the [Java Client Library](https://github.com/osisoft/sample-ocs-sample_libraries-java) (see its [readme](https://github.com/osisoft/sample-ocs-sample_libraries-java) for instructions)
-1. The sample is configured using the file [config.placeholder.properties](config.placeholder.properties). Before editing, rename this file to `config.properties`. 
+1. The sample is configured using the file [config.placeholder.properties](config.placeholder.properties). Before editing, rename this file to `config.properties`.
    - This repository's `.gitignore` rules should prevent the file from ever being checked in to any fork or branch, to ensure credentials are not compromised.
 1. Replace the configuration strings in `config.properties`
 1. Build and run the project:
@@ -349,6 +349,6 @@ ocsClient.Types.deleteType(tenantId, namespaceId, sampleTypeId);
 
 Tested against Maven 3.6.1 and Java 1.8.0_212.
 
-For the main OCS waveform samples page on master [ReadMe](https://github.com/osisoft/OSI-Samples-OCS/blob/master/docs/SDS_WAVEFORM_README.md)  
-For the main OCS samples page on master [ReadMe](https://github.com/osisoft/OSI-Samples-OCS)  
-For the main OSIsoft samples page on master [ReadMe](https://github.com/osisoft/OSI-Samples)
+For the main OCS waveform samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS/blob/main/docs/SDS_WAVEFORM_README.md)  
+For the main OCS samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS)  
+For the main OSIsoft samples page [ReadMe](https://github.com/osisoft/OSI-Samples)
