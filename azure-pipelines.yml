@@ -42,6 +42,7 @@ variables:
 jobs:
   - job: Tests_OCS
     strategy:
+      maxParallel: 1
       matrix:
         linux:
           agentOS: Linux
