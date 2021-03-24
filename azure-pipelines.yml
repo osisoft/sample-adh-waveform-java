@@ -49,7 +49,9 @@ jobs:
           agentOS: Windows_NT
     pool:
       name: 00-OSIManaged-Containers
-      demands: Agent.OS -equals $(agentOS)
+      demands:
+        - Agent.OS -equals $(agentOS)
+        - OPENJDK
     steps:
       - checkout: self
         path: 's'
