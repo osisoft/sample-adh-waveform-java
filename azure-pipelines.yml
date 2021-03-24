@@ -61,14 +61,6 @@ jobs:
           fileOriginal: $(CredFile)
           fileLibrary: $(CredFileLibraryOCS)
 
-      - task: JavaToolInstaller@0
-        inputs:
-          versionSpec: '11'
-          jdkArchitectureOption: 'x64'
-          jdkSourceOption: 'PreInstalled'
-          jdkDestinationDirectory: '$(Agent.ToolsDirectory)/jdk11'
-          cleanDestinationDirectory: false
-
       - script: mvn install -f pom.xml
         workingDirectory: $(Build.SourcesDirectory)/lib
         displayName: 'Maven install library'
@@ -128,6 +120,7 @@ jobs:
         inputs:
           mavenPomFile: '$(Build.SourcesDirectory)/pom.xml'
           goals: 'package'
+          options: '-DskipTests'
         displayName: 'Build'
 
       - template: '/miscellaneous/build_templates/analysis.yml@templates'
