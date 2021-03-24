@@ -115,6 +115,11 @@ jobs:
       name: 00-OSIManaged-Containers
       demands: Agent.OS -equals Windows_NT
     steps:
+      - checkout: self
+        path: 's'
+      - checkout: library
+        path: 's/lib'
+
       - script: mvn install -f pom.xml
         workingDirectory: $(Build.SourcesDirectory)/lib
         displayName: 'Maven install library'
