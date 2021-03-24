@@ -41,17 +41,15 @@ variables:
 
 jobs:
   - job: Tests_OCS
+    strategy:
+      matrix:
+        linux:
+          agentOS: Linux
+        windows:
+          agentOS: Windows_NT
     pool:
-      name: OpsGuild
-      demands: LinuxAgentEvaluation -equals true
-    # strategy:
-    #   matrix:
-    #     linux:
-    #       imageName: ubuntu-latest
-    #     windows:
-    #       imageName: windows-latest
-    # pool:
-    #   vmImage: $(imageName)
+      name: 00-OSIManaged-Containers
+      demands: Agent.OS -equals $(agentOS)
     steps:
       - checkout: self
         path: 's'
@@ -84,34 +82,47 @@ jobs:
           testRunTitle: '$(Agent.JobName) on $(Agent.OS)'
         displayName: 'Run tests'
 
-  # - job: Tests_EDS
-  #   pool:
-  #     name: 00-OSIManaged-Test
-  #     demands: COMPUTERNAME -equals $(buildAgent)
-  #   steps:
-  #     - checkout: self
-  #       path: 's'
-  #     - checkout: library
-  #       path: 's/lib'
+  - job: Tests_EDS
+    pool:
+      name: 00-OSIManaged-Test
+      demands: COMPUTERNAME -equals $(buildAgent)
+    steps:
+      - checkout: self
+        path: 's'
+      - checkout: library
+        path: 's/lib'
 
-  #     - template: '/miscellaneous/build_templates/config.yml@templates'
-  #       parameters:
-  #         fileOriginal: $(CredFile)
-  #         fileLibrary: $(CredFileLibraryEDS)
+      - template: '/miscellaneous/build_templates/config.yml@templates'
+        parameters:
+          fileOriginal: $(CredFile)
+          fileLibrary: $(CredFileLibraryEDS)
 
-  #     - script: mvn install -f pom.xml
-  #       workingDirectory: $(Build.SourcesDirectory)/lib
-  #       displayName: 'Maven install library'
+      - script: mvn install -f pom.xml
+        workingDirectory: $(Build.SourcesDirectory)/lib
+        displayName: 'Maven install library'
 
-  #     - task: Maven@3
-  #       inputs:
-  #         mavenPomFile: '$(Build.SourcesDirectory)/pom.xml'
-  #         goals: 'test'
-  #         publishJUnitResults: true
-  #         testResultsFiles: '**/TEST-*.xml'
-  #         testRunTitle: '$(Agent.JobName) on $(imageName)'
-  #       displayName: 'Run tests'
+      - task: Maven@3
+        inputs:
+          mavenPomFile: '$(Build.SourcesDirectory)/pom.xml'
+          goals: 'test'
+          publishJUnitResults: true
+          testResultsFiles: '**/TEST-*.xml'
+          testRunTitle: '$(Agent.JobName) on $(Agent.OS)'
+        displayName: 'Run tests'
 
-  # - template: '/miscellaneous/build_templates/analysis.yml@templates'
-  #   parameters:
-  #     language: java
+  - job: Analysis
+    pool:
+      name: 00-OSIManaged-Containers
+      demands: Agent.OS -equals Windows_NT
+    steps:
+      - script: mvn install -f pom.xml
+        workingDirectory: $(Build.SourcesDirectory)/lib
+        displayName: 'Maven install library'
+
+      - task: Maven@3
+        inputs:
+          mavenPomFile: '$(Build.SourcesDirectory)/pom.xml'
+          goals: 'package'
+        displayName: 'Build'
+
+      - template: '/miscellaneous/build_templates/analysis.yml@templates'
