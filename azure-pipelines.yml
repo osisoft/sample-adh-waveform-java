@@ -42,7 +42,7 @@ variables:
 jobs:
   - job: Tests_OCS
     strategy:
-      maxParallel: 1
+      maxParallel: 1 # Avoid conflicts in OCS
       matrix:
         linux:
           agentOS: Linux
