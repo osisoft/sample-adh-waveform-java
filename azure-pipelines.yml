@@ -2,25 +2,19 @@ trigger:
   batch: true
   branches:
     include:
-      - master
-  paths:
-    include:
-      - '/'
+      - main
 
 pr:
   branches:
     include:
-      - master
-  paths:
-    include:
-      - '/'
+      - main
 
 schedules:
   - cron: '0 0 * * 0'
     displayName: Weekly build
     branches:
       include:
-        - master
+        - main
     always: true
 
 resources:
@@ -36,10 +30,6 @@ resources:
 
 variables:
   - template: '/miscellaneous/build_templates/variables.yml@templates'
-  - name: projPath
-    value: '/'
-  - name: libPath
-    value: '/lib'
   - name: CredFile
     value: config.properties
   - name: CredFileLibraryOCS
@@ -52,13 +42,15 @@ variables:
 jobs:
   - job: Tests_OCS
     strategy:
+      maxParallel: 1 # Avoid conflicts in OCS
       matrix:
         linux:
-          imageName: ubuntu-latest
+          agentOS: Linux
         windows:
-          imageName: windows-latest
+          agentOS: Windows_NT
     pool:
-      vmImage: $(imageName)
+      name: 00-OSIManaged-Containers
+      demands: Agent.OS -equals $(agentOS)
     steps:
       - checkout: self
         path: 's'
@@ -69,7 +61,6 @@ jobs:
         parameters:
           fileOriginal: $(CredFile)
           fileLibrary: $(CredFileLibraryOCS)
-          filePath: $(projPath)
 
       - task: JavaToolInstaller@0
         inputs:
@@ -78,18 +69,19 @@ jobs:
           jdkSourceOption: 'PreInstalled'
           jdkDestinationDirectory: '$(Agent.ToolsDirectory)/jdk11'
           cleanDestinationDirectory: false
+        condition: eq(variables['Agent.OS'], 'Linux')
 
       - script: mvn install -f pom.xml
-        workingDirectory: $(Build.SourcesDirectory)$(libPath)/
+        workingDirectory: $(Build.SourcesDirectory)/lib
         displayName: 'Maven install library'
 
       - task: Maven@3
         inputs:
-          mavenPomFile: '$(Build.SourcesDirectory)$(projPath)/pom.xml'
+          mavenPomFile: '$(Build.SourcesDirectory)/pom.xml'
           goals: 'test'
           publishJUnitResults: true
           testResultsFiles: '**/TEST-*.xml'
-          testRunTitle: '$(Agent.JobName) on $(imageName)'
+          testRunTitle: '$(Agent.JobName) on $(Agent.OS)'
         displayName: 'Run tests'
 
   - job: Tests_EDS
@@ -106,21 +98,39 @@ jobs:
         parameters:
           fileOriginal: $(CredFile)
           fileLibrary: $(CredFileLibraryEDS)
-          filePath: $(projPath)
 
       - script: mvn install -f pom.xml
-        workingDirectory: $(Build.SourcesDirectory)$(libPath)/
+        workingDirectory: $(Build.SourcesDirectory)/lib
         displayName: 'Maven install library'
 
       - task: Maven@3
         inputs:
-          mavenPomFile: '$(Build.SourcesDirectory)$(projPath)/pom.xml'
+          mavenPomFile: '$(Build.SourcesDirectory)/pom.xml'
           goals: 'test'
           publishJUnitResults: true
           testResultsFiles: '**/TEST-*.xml'
-          testRunTitle: '$(Agent.JobName) on $(imageName)'
+          testRunTitle: '$(Agent.JobName) on $(Agent.OS)'
         displayName: 'Run tests'
 
-  - template: '/miscellaneous/build_templates/analysis.yml@templates'
-    parameters:
-      language: java
+  - job: Analysis
+    pool:
+      name: 00-OSIManaged-Containers
+      demands: Agent.OS -equals Windows_NT
+    steps:
+      - checkout: self
+        path: 's'
+      - checkout: library
+        path: 's/lib'
+
+      - script: mvn install -f pom.xml
+        workingDirectory: $(Build.SourcesDirectory)/lib
+        displayName: 'Maven install library'
+
+      - task: Maven@3
+        inputs:
+          mavenPomFile: '$(Build.SourcesDirectory)/pom.xml'
+          goals: 'package'
+          options: '-DskipTests'
+        displayName: 'Build'
+
+      - template: '/miscellaneous/build_templates/analysis.yml@templates'
