@@ -1,10 +1,5 @@
 package com.github.osisoft.sdsjava;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -15,13 +10,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+
 import com.github.osisoft.ocs_sample_library_preview.*;
 import com.github.osisoft.ocs_sample_library_preview.sds.*;
+import com.github.osisoft.ocs_sample_library_preview.security.*;
+import com.github.osisoft.ocs_sample_library_preview.community.*;
 
 public class Program {
     // get configuration
     static String tenantId = getConfiguration("tenantId");
     static String namespaceId = getConfiguration("namespaceId");
+    static String communityId = getConfiguration("communityId");
 
     // id strings
     static String sampleTypeId = "WaveData_SampleType";
@@ -56,6 +60,8 @@ public class Program {
         Gson mGson = new Gson();
         TypesClient typesClient = null;
         StreamsClient streamsClient = null;
+        RolesClient rolesClient = null;
+        CommunitiesClient communitiesClient = null;
         if (tenantId.equals("default")) {
             System.out.println("EDS");
             EDSClient edsClient = new EDSClient(getConfiguration("apiVersion"), getConfiguration("resource"));
@@ -65,6 +71,8 @@ public class Program {
             OCSClient ocsClient = new OCSClient();
             typesClient = ocsClient.Types;
             streamsClient = ocsClient.Streams;
+            rolesClient = ocsClient.Roles;
+            communitiesClient = ocsClient.Communities;
         }
 
         try {
@@ -452,7 +460,68 @@ public class Program {
                 System.out.println();
             }
 
-            // Step 18
+            // Community Steps
+            if (communityId != null && communityId.length() > 0) {
+                // Step 18
+                // getting tenant roles
+                System.out.println();
+                System.out.println("Get tenant roles");
+                ArrayList<Role> roles = rolesClient.getRoles(tenantId);
+                Role role = null;
+                for (Role r : roles) {
+                    if (r.getRoleTypeId() != null && r.getRoleTypeId().equals(rolesClient.CommunityMember)
+                        && r.getCommunityId() != null && r.getCommunityId().equals(communityId)) {
+                        role = r;
+                        break;
+                    }
+                }
+                System.out.println("Community member Id:");
+                System.out.println(role.getId());
+
+                // sharing stream to community
+                System.out.println();
+                System.out.println("Sharing stream to community");
+
+                JsonArray patch = new JsonArray();
+                JsonObject trustee = new JsonObject();
+                trustee.addProperty("ObjectId", role.getId());
+                trustee.addProperty("TenantId", (String) null);
+                trustee.addProperty("Type", "Role");
+                JsonObject entry = new JsonObject();
+                entry.addProperty("AccessRights", 1);
+                entry.addProperty("AccessType", 0);
+                entry.add("Trustee", new Gson().toJsonTree(trustee));
+                JsonObject add = new JsonObject();
+                add.addProperty("op", "add");
+                add.addProperty("path", "/RoleTrusteeAccessControlEntries/-");
+                add.add("value", new Gson().toJsonTree(entry));
+                patch.add(add);
+
+                streamsClient.patchAccessControl(tenantId, namespaceId, sampleStreamId, patch);
+
+                // Step 19
+                // searching the community
+                System.out.println();
+                System.out.println("Searching the community");
+                ArrayList<StreamSearchResult> communityStreams = communitiesClient.getCommunityStreams(tenantId, communityId, sampleStreamId);
+                System.out.println("Found matching streams:");
+                for (StreamSearchResult s : communityStreams) {
+                    System.out.println(s.getId());
+                }
+
+                // Step 20
+                // getting stream data from the community stream
+                System.out.println();
+                System.out.println("Getting stream data from the community stream");
+                StreamSearchResult communityStream = communityStreams.get(0);
+                String communityJson = streamsClient.getLastValueUrl(communityStream.getSelf());
+                WaveData communityData = mGson.fromJson(communityJson, WaveData.class);
+                System.out.println("Retrieved last value:");
+                System.out.println(communityData.toString());
+                System.out.println();
+            }
+
+            // Step 21
             // delete data
 
             // remove the first value
@@ -468,7 +537,7 @@ public class Program {
             if (foundEvents.isEmpty())
                 System.out.println("All values deleted successfully!");
 
-            // Step 19
+            // Step 22
             System.out.println("Adding a stream with a secondary index.");
             SdsStreamIndex index = new SdsStreamIndex();
             index.setSdsTypePropertyId("Radians");
@@ -521,7 +590,7 @@ public class Program {
             System.out.println("Secondary indexes on streams original:" + sampleStream.getIndexes().size()
                     + ". New one:  " + numberOfIndicies);
 
-            // Step 20
+            // Step 23
             // Adding Compound Index Type
             System.out.println("Creating an SdsType with a compound index");
             SdsType typeCompound = getWaveCompoundDataType(compoundTypeId);
@@ -536,7 +605,7 @@ public class Program {
 
             streamsClient.createStream(tenantId, namespaceId, streamCompound);
 
-            // Step 21
+            // Step 24
 
             System.out.println("Inserting data");
             streamsClient.insertValues(tenantId, namespaceId, streamIdCompound,
@@ -568,7 +637,7 @@ public class Program {
             e.printStackTrace();
         } finally {
             try {
-                // Step 22
+                // Step 5
                 System.out.println();
                 System.out.println("Cleaning up");
                 cleanUp(typesClient, streamsClient);
