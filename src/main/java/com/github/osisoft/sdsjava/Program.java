@@ -469,7 +469,7 @@ public class Program {
                 ArrayList<Role> roles = rolesClient.getRoles(tenantId);
                 Role role = null;
                 for (Role r : roles) {
-                    if (r.getRoleTypeId() != null && r.getRoleTypeId().equals(rolesClient.CommunityMember)
+                    if (r.getRoleTypeId() != null && r.getRoleTypeId().equals(rolesClient.CommunityMemberRoleTypeId)
                         && r.getCommunityId() != null && r.getCommunityId().equals(communityId)) {
                         role = r;
                         break;
