@@ -637,7 +637,7 @@ public class Program {
             e.printStackTrace();
         } finally {
             try {
-                // Step 5
+                // Step 25
                 System.out.println();
                 System.out.println("Cleaning up");
                 cleanUp(typesClient, streamsClient);
