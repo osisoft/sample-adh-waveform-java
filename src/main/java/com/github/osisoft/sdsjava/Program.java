@@ -482,7 +482,7 @@ public class Program {
                 System.out.println();
                 System.out.println("Sharing stream to community");
 
-                JsonArray patch = getCommunityPatch(role.getId())
+                JsonArray patch = getCommunityPatch(role.getId());
                 streamsClient.patchAccessControl(tenantId, namespaceId, sampleStreamId, patch);
 
                 // Step 19
