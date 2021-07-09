@@ -482,21 +482,7 @@ public class Program {
                 System.out.println();
                 System.out.println("Sharing stream to community");
 
-                JsonArray patch = new JsonArray();
-                JsonObject trustee = new JsonObject();
-                trustee.addProperty("ObjectId", role.getId());
-                trustee.addProperty("TenantId", (String) null);
-                trustee.addProperty("Type", "Role");
-                JsonObject entry = new JsonObject();
-                entry.addProperty("AccessRights", 1);
-                entry.addProperty("AccessType", 0);
-                entry.add("Trustee", new Gson().toJsonTree(trustee));
-                JsonObject add = new JsonObject();
-                add.addProperty("op", "add");
-                add.addProperty("path", "/RoleTrusteeAccessControlEntries/-");
-                add.add("value", new Gson().toJsonTree(entry));
-                patch.add(add);
-
+                JsonArray patch = getCommunityPatch(role.getId())
                 streamsClient.patchAccessControl(tenantId, namespaceId, sampleStreamId, patch);
 
                 // Step 19
@@ -934,6 +920,24 @@ public class Program {
         }
 
         return property;
+    }
+
+    private static JsonArray getCommunityPatch(String roleId) {
+        JsonArray patch = new JsonArray();
+        JsonObject trustee = new JsonObject();
+        trustee.addProperty("ObjectId", roleId);
+        trustee.addProperty("TenantId", (String) null);
+        trustee.addProperty("Type", "Role");
+        JsonObject entry = new JsonObject();
+        entry.addProperty("AccessRights", 1);
+        entry.addProperty("AccessType", 0);
+        entry.add("Trustee", new Gson().toJsonTree(trustee));
+        JsonObject add = new JsonObject();
+        add.addProperty("op", "add");
+        add.addProperty("path", "/RoleTrusteeAccessControlEntries/-");
+        add.add("value", new Gson().toJsonTree(entry));
+        patch.add(add);
+        return patch;
     }
 
     public static void handleException(SdsError e) {
