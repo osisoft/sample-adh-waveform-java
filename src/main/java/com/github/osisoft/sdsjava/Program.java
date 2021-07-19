@@ -461,7 +461,7 @@ public class Program {
             }
 
             // Community Steps
-            if (communityId != null && communityId.length() > 0) {
+            if (communityId != null && communityId.length() > 0 && rolesClient != null && communitiesClient != null) {
                 // Step 18
                 // getting tenant roles
                 System.out.println();
