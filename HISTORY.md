@@ -1,5 +1,9 @@
 # Version History
 
+## 1.1.1 / 2021-07-19
+
+- Extra null checks to resolve Polaris detected issue
+
 ## 1.1.0 / 2021-07-09
 
 - Added steps for community features
