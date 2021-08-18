@@ -1,5 +1,10 @@
 # Version History
 
+## 1.1.2 / 2021-08-10
+
+- Cleaned up gitignore
+- Updated dependencies
+
 ## 1.1.1 / 2021-07-19
 
 - Extra null checks to resolve Polaris detected issue
