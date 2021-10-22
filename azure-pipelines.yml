@@ -30,12 +30,6 @@ resources:
 
 variables:
   - template: '/miscellaneous/build_templates/variables.yml@templates'
-  - name: CredFile
-    value: config.properties
-  - name: CredFileLibraryOCS
-    value: product-readiness.sds_java_ocs.properties
-  - name: CredFileLibraryEDS
-    value: product-readiness.sds_java_eds.properties
   - name: analysisProject
     value: SDS_Java
 
@@ -57,10 +51,9 @@ jobs:
       - checkout: library
         path: 's/lib'
 
-      - template: '/miscellaneous/build_templates/config.yml@templates'
+      - template: '/miscellaneous/build_templates/appsettings.yml@templates'
         parameters:
-          fileOriginal: $(CredFile)
-          fileLibrary: $(CredFileLibraryOCS)
+          secrets: 'TenantId, NamespaceId, CommunityId, ClientId, ClientSecret'
 
       - task: JavaToolInstaller@0
         inputs:
@@ -88,16 +81,20 @@ jobs:
     pool:
       name: 00-OSIManaged-Test
       demands: COMPUTERNAME -equals $(buildAgent)
+    variables:
+      - name: TenantId
+        value: default
+      - name: NamespaceId
+        value: default
+      - name: Resource
+        value: http://localhost:5590
     steps:
       - checkout: self
         path: 's'
       - checkout: library
         path: 's/lib'
 
-      - template: '/miscellaneous/build_templates/config.yml@templates'
-        parameters:
-          fileOriginal: $(CredFile)
-          fileLibrary: $(CredFileLibraryEDS)
+      - template: '/miscellaneous/build_templates/appsettings.yml@templates'
 
       - script: mvn install -f pom.xml
         workingDirectory: $(Build.SourcesDirectory)/lib
