@@ -16,9 +16,9 @@ Developed against Maven 3.6.1 and Java 1.8.0_181.
 
 1. Clone a local copy of the GitHub repository.
 1. Install the [Java Client Library](https://github.com/osisoft/sample-ocs-sample_libraries-java) (see its [readme](https://github.com/osisoft/sample-ocs-sample_libraries-java) for instructions)
-1. The sample is configured using the file [config.placeholder.properties](config.placeholder.properties). Before editing, rename this file to `config.properties`.
+1. The sample is configured using the file [appsettings.placeholder.json](appsettings.placeholder.json). Before editing, rename this file to `appsettings.json`.
    - This repository's `.gitignore` rules should prevent the file from ever being checked in to any fork or branch, to ensure credentials are not compromised.
-1. Replace the configuration strings in `config.properties`
+1. Replace the configuration strings in `appsettings.json`
 1. Build and run the project:
    1. cd to your project location.
    1. run `mvn package exec:java` on cmd. or `mvn test` to run the test
@@ -42,19 +42,6 @@ Each REST API call consists of an HTTP request along with a specific URL and HTT
 
 The constructor for the OCSClient and EDSClient classes take the base URL (that is, the protocol, server address and port number) and the api version. They also create a new Gson serializer/deserializer to convert between Java Objects and JSON. This is all done in a shared baseClient that is used amongst the the various services that we can interact with.
 
-```java
-public BaseClient() {
-    gclientId = getConfiguration("clientId");
-    gclientSecret = getConfiguration("clientSecret");
-    gresource = getConfiguration("resource");
-    gresource = gresource.endsWith("/") ? gresource :  gresource + "/";
-
-    this.baseUrl = gresource;
-    this.apiVersion = getConfiguration("apiVersion");
-    this.mGson = new Gson();
-}
-```
-
 The sample library specifies to use `gzip` compression by adding the `Accept-Encoding` header to each request inside the `BaseClient.getConnection()` method, and decompressing the response inside the `BaseClient.getResponse()` method.
 
 ## Configure the Sample
@@ -75,29 +62,32 @@ Finally, a valid namespace ID for the tenant must be given as well. To create a 
 
 ### Edge Data Store
 
-To run this sample against the Edge Data Store, the sample must be run locally on the machine where Edge Data Store is installed. In addition, the same config information must be entered with the exception of the `[Credentials]` section of the file. For a typical or default installation, the values will be:
+To run this sample against the Edge Data Store, the sample must be run locally on the machine where Edge Data Store is installed. In addition, the same appsettings information must be entered with the exception of the `ClientId` and `ClientSecret` parameters'. For a typical or default installation, the values will be:
 
-- `resource = http://localhost:5590`
-- `tenantId = default`
-- `namespaceId = default`
-- `apiVersion = v1`
+- `"Resource": "http://localhost:5590"`
+- `"TenantId": "default"`
+- `"NamespaceId": "default"`
+- `"ApiVersion": "v1"`
 
-### Config Schema
+### Appsettings Schema
 
-The values to be replaced are in `config.properties`:
+The values to be replaced are in `appsettings.json`:
 
-```ini
-resource = https://dat-b.osisoft.com
-clientId = REPLACE_WITH_APPLICATION_IDENTIFIER
-clientSecret = REPLACE_WITH_APPLICATION_SECRET
-tenantId = REPLACE_WITH_TENANT_ID
-namespaceId = REPLACE_WITH_NAMESPACE_ID
-apiVersion = v1
+```json
+{
+  "Resource": "https://dat-b.osisoft.com",
+  "ApiVersion": "v1",
+  "TenantId": "PLACEHOLDER_REPLACE_WITH_TENANT_ID",
+  "NamespaceId": "PLACEHOLDER_REPLACE_WITH_NAMESPACE_ID",
+  "CommunityId": "",
+  "ClientId": "PLACEHOLDER_REPLACE_WITH_APPLICATION_IDENTIFIER",
+  "ClientSecret": "PLACEHOLDER_REPLACE_WITH_APPLICATION_SECRET"
+}
 ```
 
 ## Obtain an Authentication Token
 
-Near the end of the `BaseClient.Java` file is a method called `AcquireAuthToken`. The first step in obtaining an authorization token is to connect to the Open ID discovery endpoint and get a URI for obtaining the token. Thereafter, the token based on `clientId` and `clientSecret` is retrieved.
+Near the end of the `BaseClient.Java` file is a method called `AcquireAuthToken`. The first step in obtaining an authorization token is to connect to the Open ID discovery endpoint and get a URI for obtaining the token. Thereafter, the token based on `ClientId` and `ClientSecret` is retrieved.
 
 The token is cached, but as tokens have a fixed lifetime, typically one hour. It can be refreshed by the authenticating authority for a longer period. If the refresh period has expired, the credentials must be presented to the authority again. To streamline development, the `AcquireToken` method hides these details from client programmers. As long as you call `AcquireToken` before each HTTP call, you will have a valid token.
 
