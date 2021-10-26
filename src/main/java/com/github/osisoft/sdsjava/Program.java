@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -22,10 +21,13 @@ import com.github.osisoft.ocs_sample_library_preview.security.*;
 import com.github.osisoft.ocs_sample_library_preview.community.*;
 
 public class Program {
+    // get appsettings
+    static Appsettings appsettings = getAppsettings();
+
     // get configuration
-    static String tenantId = getConfiguration("tenantId");
-    static String namespaceId = getConfiguration("namespaceId");
-    static String communityId = getConfiguration("communityId");
+    static String tenantId = appsettings.getTenantId();
+    static String namespaceId = appsettings.getNamespaceId();
+    static String communityId = appsettings.getCommunityId();
 
     // id strings
     static String sampleTypeId = "WaveData_SampleType";
@@ -64,11 +66,15 @@ public class Program {
         CommunitiesClient communitiesClient = null;
         if (tenantId.equals("default")) {
             System.out.println("EDS");
-            EDSClient edsClient = new EDSClient(getConfiguration("apiVersion"), getConfiguration("resource"));
+            EDSClient edsClient = new EDSClient(appsettings.getApiVersion(), appsettings.getResource());
             typesClient = edsClient.Types;
             streamsClient = edsClient.Streams;
         } else {
-            OCSClient ocsClient = new OCSClient();
+            OCSClient ocsClient = new OCSClient(appsettings.getApiVersion(), 
+                                                appsettings.getTenantId(), 
+                                                appsettings.getClientId(), 
+                                                appsettings.getClientSecret(), 
+                                                appsettings.getResource());
             typesClient = ocsClient.Types;
             streamsClient = ocsClient.Streams;
             rolesClient = ocsClient.Roles;
@@ -907,19 +913,29 @@ public class Program {
         }
     }
 
-    private static String getConfiguration(String propertyId) {
-        String property = "";
-        Properties props = new Properties();
+    private static Appsettings getAppsettings() {
+        Gson mGson = new Gson();
+
+        Appsettings appsettings = new Appsettings();
         System.out.println(new File(".").getAbsolutePath());
 
-        try (InputStream inputStream = new FileInputStream("config.properties")) {
-            props.load(inputStream);
-            property = props.getProperty(propertyId);
+        try (InputStream inputStream = new FileInputStream("appsettings.json")) {
+            String fileString = null;
+            int bytesToRead = inputStream.available();
+
+            if (bytesToRead > 0) {
+                byte[] bytes = new byte[bytesToRead];
+                inputStream.read(bytes);
+                fileString = new String(bytes);
+            }
+
+            appsettings = mGson.fromJson(fileString, Appsettings.class);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return property;
+        return appsettings;
     }
 
     private static JsonArray getCommunityPatch(String roleId) {
@@ -962,7 +978,7 @@ public class Program {
         } catch (SdsError e) {
             handleException(e);
         }
-
+ 
         System.out.println("Deleting the streamViews");
         try {
             streamsClient.deleteStreamView(tenantId, namespaceId, sampleStreamViewId);
