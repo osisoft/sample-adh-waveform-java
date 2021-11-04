@@ -1001,6 +1001,21 @@ public class Program {
         success = false;
         e.printStackTrace();
     }
+    
+    private static void TryDeleteType(TypesClient typesClient, String tenantId, String namespaceId, String typeId) throws SdsError {
+		String conflictMessage = "Could not delete Type %s response indicates that there are Streams, Stream Views, or Types referencing it.";
+    	
+    	try {
+            typesClient.deleteType(tenantId, namespaceId, typeId);
+        } catch (SdsError e) {
+        	if (e.getHttpStatusCode() == 409) {
+        		String message = String.format(conflictMessage, typeId);
+        		System.out.println(message);
+        	} else {        		
+        		handleException(e);
+        	}
+        }
+    }
 
     public static void cleanUp(TypesClient typesClient, StreamsClient streamsClient) throws SdsError {
         System.out.println("Deleting the stream");
@@ -1033,29 +1048,10 @@ public class Program {
         }
 
         System.out.println("Deleting the types");
-        try {
-            // typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
-            System.out.println("deleted sampletype");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        try {
-            typesClient.deleteType(tenantId, namespaceId, targetTypeId);
-            System.out.println("deleted targetType");
-        } catch (SdsError e) {
-            handleException(e);
-        }
-        try {
-            typesClient.deleteType(tenantId, namespaceId, integerTargetTypeId);
-            System.out.println("deleted integerType");
-        } catch (SdsError e) {
-            handleException(e);
-        }
-        try {
-            typesClient.deleteType(tenantId, namespaceId, compoundTypeId);
-            System.out.println("deleted compoundType");
-        } catch (SdsError e) {
-            handleException(e);
-        }
+        
+        TryDeleteType(typesClient, tenantId, namespaceId, compoundTypeId);
+        TryDeleteType(typesClient, tenantId, namespaceId, integerTargetTypeId);
+        TryDeleteType(typesClient, tenantId, namespaceId, targetTypeId);
+        TryDeleteType(typesClient, tenantId, namespaceId, sampleTypeId);
     }
 }
