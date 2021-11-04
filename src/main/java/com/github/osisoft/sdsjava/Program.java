@@ -1036,8 +1036,8 @@ public class Program {
         try {
             // typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
             System.out.println("deleted sampletype");
-        } catch (SdsError e) {
-            handleException(e);
+        } catch (Exception e) {
+            System.out.println(e);
         }
         try {
             typesClient.deleteType(tenantId, namespaceId, targetTypeId);
