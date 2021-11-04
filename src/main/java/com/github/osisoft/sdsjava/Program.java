@@ -1034,7 +1034,7 @@ public class Program {
 
         System.out.println("Deleting the types");
         try {
-            typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
+            // typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
             System.out.println("deleted sampletype");
         } catch (SdsError e) {
             handleException(e);
