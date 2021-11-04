@@ -1035,21 +1035,25 @@ public class Program {
         System.out.println("Deleting the types");
         try {
             typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
+            System.out.println("deleted sampletype");
         } catch (SdsError e) {
             handleException(e);
         }
         try {
             typesClient.deleteType(tenantId, namespaceId, targetTypeId);
+            System.out.println("deleted targetType");
         } catch (SdsError e) {
             handleException(e);
         }
         try {
             typesClient.deleteType(tenantId, namespaceId, integerTargetTypeId);
+            System.out.println("deleted integerType");
         } catch (SdsError e) {
             handleException(e);
         }
         try {
             typesClient.deleteType(tenantId, namespaceId, compoundTypeId);
+            System.out.println("deleted compoundType");
         } catch (SdsError e) {
             handleException(e);
         }
