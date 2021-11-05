@@ -86,13 +86,13 @@ public class Program {
             // create a SdsType
             System.out.println("Creating a SdsType");
             SdsType sampleType = getWaveDataType(sampleTypeId);
-        	sampleType = GetOrCreateSdsType(typesClient, mGson, tenantId, namespaceId, sampleType);
+        	sampleType = getOrCreateSdsType(typesClient, mGson, tenantId, namespaceId, sampleType);
 
             // Step 3
             // create a SdsStream
             System.out.println("Creating a SdsStream");
             SdsStream sampleStream = new SdsStream(sampleStreamId, sampleTypeId);
-            sampleStream = GetOrCreateSdsStream(streamsClient, mGson, tenantId, namespaceId, sampleStream);
+            sampleStream = getOrCreateSdsStream(streamsClient, mGson, tenantId, namespaceId, sampleStream);
 
             // Step 4
             // insert data
@@ -287,7 +287,7 @@ public class Program {
             autoStreamView.setDescription("This is a StreamView mapping SampleType to SampleTargetType");
             autoStreamView.setSourceTypeId(sampleTypeId);
             autoStreamView.setTargetTypeId(targetTypeId);
-            streamsClient.createStreamView(tenantId, namespaceId, autoStreamView);
+            createSdsStreamView(streamsClient, tenantId, namespaceId, autoStreamView);
 
             // create SdsStreamViewProperties
             SdsStreamViewProperty vp1 = new SdsStreamViewProperty();
@@ -316,7 +316,7 @@ public class Program {
             manualStreamView.setSourceTypeId(sampleTypeId);
             manualStreamView.setTargetTypeId(integerTargetTypeId);
             manualStreamView.setProperties(props);
-            streamsClient.createStreamView(tenantId, namespaceId, manualStreamView);
+            createSdsStreamView(streamsClient, tenantId, namespaceId, manualStreamView);
 
             // range values with automatically mapped SdsStreamView
             System.out.println(
@@ -534,9 +534,7 @@ public class Program {
 
             SdsStream secondary = new SdsStream(streamIdSecondary, sampleTypeId);
             secondary.setIndexes(Arrays.asList(index));
-
-            String secondaryS = streamsClient.createStream(tenantId, namespaceId, secondary);
-            secondary = mGson.fromJson(secondaryS, SdsStream.class);
+            secondary = getOrCreateSdsStream(streamsClient, mGson, tenantId, namespaceId, secondary);
 
             int count = 0;
             if (sampleStream.getIndexes() != null) {
@@ -584,14 +582,14 @@ public class Program {
             // Adding Compound Index Type
             System.out.println("Creating an SdsType with a compound index");
             SdsType typeCompound = getWaveCompoundDataType(compoundTypeId);
-            typeCompound = GetOrCreateSdsType(typesClient, mGson, tenantId, namespaceId, typeCompound);
+            typeCompound = getOrCreateSdsType(typesClient, mGson, tenantId, namespaceId, typeCompound);
             
             // create an SdsStream
             System.out.println("Creating an SdsStream off of type with compound index");
             SdsStream streamCompound = new SdsStream(streamIdCompound, typeCompound.getId(),
                     "This is a sample SdsStream for storing WaveData type measurements");
             
-            streamCompound = GetOrCreateSdsStream(streamsClient, mGson, tenantId, namespaceId, streamCompound);
+            streamCompound = getOrCreateSdsStream(streamsClient, mGson, tenantId, namespaceId, streamCompound);
 
             // Step 24
             System.out.println("Inserting data");
@@ -972,7 +970,7 @@ public class Program {
     }
     
     /**
-     * Gets or creates an SdsType using the provided Type data.
+     * Gets or creates an SdsType using the provided type data.
      *
      * @param typesClient - client to execute type operations
      * @param mGson - Gson object to serialize Json
@@ -980,7 +978,7 @@ public class Program {
      * @param namespaceId - id of the namespace to use
      * @param sdsType - object containing type data
      */
-    private static SdsType GetOrCreateSdsType(TypesClient typesClient, Gson mGson, String tenantId, String namespaceId, SdsType sampleType) throws SdsError {        
+    private static SdsType getOrCreateSdsType(TypesClient typesClient, Gson mGson, String tenantId, String namespaceId, SdsType sampleType) throws SdsError {        
         String jsonType = "";
         try {            	
         	jsonType = typesClient.getType(tenantId, namespaceId, sampleType.getId());
@@ -997,7 +995,7 @@ public class Program {
     }
     
     /**
-     * Gets or creates an SdsStream using the provided Stream data.
+     * Gets or creates an SdsStream using the provided stream data.
      *
      * @param streamsClient - client to execute stream operations
      * @param mGson - Gson object to serialize Json
@@ -1005,7 +1003,7 @@ public class Program {
      * @param namespaceId - id of the namespace to use
      * @param sdsStream - object containing stream data
      */
-    private static SdsStream GetOrCreateSdsStream(StreamsClient streamsClient, Gson mGson, String tenantId, String namespaceId, SdsStream sampleStream) throws SdsError {        
+    private static SdsStream getOrCreateSdsStream(StreamsClient streamsClient, Gson mGson, String tenantId, String namespaceId, SdsStream sampleStream) throws SdsError {        
         String jsonStream = "";
         try {
         	jsonStream = streamsClient.getStream(tenantId,  namespaceId, sampleStream.getId());
@@ -1019,6 +1017,28 @@ public class Program {
         }
         
         return mGson.fromJson(jsonStream, SdsStream.class);
+    }
+    
+    /**
+     * Creates an SdsStreamView using the provided stream view data, swallowing any conflict in case the stream view already exists.
+     *
+     * @param streamsClient - client to execute stream operations
+     * @param tenantId - id of the tenant to use
+     * @param namespaceId - id of the namespace to use
+     * @param sampleStreamView - object containing stream view data
+     */
+    private static void createSdsStreamView(StreamsClient streamsClient, String tenantId, String namespaceId, SdsStreamView sampleStreamView) throws SdsError {        
+
+    	try {
+            streamsClient.createStreamView(tenantId, namespaceId, sampleStreamView);
+        }
+        catch (SdsError e) {
+        	if (e.getHttpStatusCode() != 409) {
+        		throw e;
+        	}
+        }
+        
+        return;
     }
 
     public static void cleanUp(TypesClient typesClient, StreamsClient streamsClient) throws SdsError {
