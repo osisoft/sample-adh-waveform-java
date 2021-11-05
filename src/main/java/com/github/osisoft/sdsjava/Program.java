@@ -86,38 +86,13 @@ public class Program {
             // create a SdsType
             System.out.println("Creating a SdsType");
             SdsType sampleType = getWaveDataType(sampleTypeId);
-            
-            String jsonType = "";
-            try {            	
-            	jsonType = typesClient.getType(tenantId, namespaceId, sampleType.getId());
-            }
-            catch (SdsError e) {
-            	if (e.getHttpStatusCode() == 404) {            		
-            		jsonType = typesClient.createType(tenantId, namespaceId, sampleType);
-            	} else {
-            		throw e;
-            	}
-            }
-            
-            sampleType = mGson.fromJson(jsonType, SdsType.class);
+        	sampleType = GetOrCreateSdsType(typesClient, mGson, tenantId, namespaceId, sampleType);
 
             // Step 3
             // create a SdsStream
             System.out.println("Creating a SdsStream");
             SdsStream sampleStream = new SdsStream(sampleStreamId, sampleTypeId);
-            
-            String jsonStream = "";
-            try {
-            	jsonStream = streamsClient.getStream(tenantId,  namespaceId, sampleStream.getId());
-            }
-            catch (SdsError e) {
-            	if (e.getHttpStatusCode() == 404) {
-                    jsonStream = streamsClient.createStream(tenantId, namespaceId, sampleStream);
-            	} else {
-            		throw e;
-            	}
-            }
-            sampleStream = mGson.fromJson(jsonStream, SdsStream.class);
+            sampleStream = GetOrCreateSdsStream(streamsClient, mGson, tenantId, namespaceId, sampleStream);
 
             // Step 4
             // insert data
@@ -609,37 +584,16 @@ public class Program {
             // Adding Compound Index Type
             System.out.println("Creating an SdsType with a compound index");
             SdsType typeCompound = getWaveCompoundDataType(compoundTypeId);
-
-            try {
-            	jsonType = typesClient.getType(tenantId, namespaceId, typeCompound.getId());
-            }
-            catch (SdsError e) {
-            	if (e.getHttpStatusCode() == 404) {
-            		jsonType = typesClient.createType(tenantId, namespaceId, typeCompound);
-            	} else {
-            		throw e;
-            	}
-            }
-            typeCompound = mGson.fromJson(jsonType, SdsType.class);
-
+            typeCompound = GetOrCreateSdsType(typesClient, mGson, tenantId, namespaceId, typeCompound);
+            
             // create an SdsStream
             System.out.println("Creating an SdsStream off of type with compound index");
             SdsStream streamCompound = new SdsStream(streamIdCompound, typeCompound.getId(),
                     "This is a sample SdsStream for storing WaveData type measurements");
-
-            try {
-            	streamsClient.getStream(tenantId, namespaceId, streamCompound.getId());
-            }
-            catch (SdsError e) {
-            	if (e.getHttpStatusCode() == 404) {
-                    streamsClient.createStream(tenantId, namespaceId, streamCompound);
-            	} else {
-            		throw e;
-            	}
-            }
+            
+            streamCompound = GetOrCreateSdsStream(streamsClient, mGson, tenantId, namespaceId, streamCompound);
 
             // Step 24
-
             System.out.println("Inserting data");
             streamsClient.insertValues(tenantId, namespaceId, streamIdCompound,
                     mGson.toJson(new WaveDataCompound[] { WaveDataCompound.next(1, 10) }));
@@ -1015,6 +969,56 @@ public class Program {
         		handleException(e);
         	}
         }
+    }
+    
+    /**
+     * Gets or creates an SdsType using the provided Type data.
+     *
+     * @param typesClient - client to execute type operations
+     * @param mGson - Gson object to serialize Json
+     * @param tenantId - id of the tenant to use
+     * @param namespaceId - id of the namespace to use
+     * @param sdsType - object containing type data
+     */
+    private static SdsType GetOrCreateSdsType(TypesClient typesClient, Gson mGson, String tenantId, String namespaceId, SdsType sampleType) throws SdsError {        
+        String jsonType = "";
+        try {            	
+        	jsonType = typesClient.getType(tenantId, namespaceId, sampleType.getId());
+        }
+        catch (SdsError e) {
+        	if (e.getHttpStatusCode() == 404) {            		
+        		jsonType = typesClient.createType(tenantId, namespaceId, sampleType);
+        	} else {
+        		throw e;
+        	}
+        }
+        
+        return mGson.fromJson(jsonType, SdsType.class);
+    }
+    
+    /**
+     * Gets or creates an SdsStream using the provided Stream data.
+     *
+     * @param streamsClient - client to execute stream operations
+     * @param mGson - Gson object to serialize Json
+     * @param tenantId - id of the tenant to use
+     * @param namespaceId - id of the namespace to use
+     * @param sdsStream - object containing stream data
+     */
+    private static SdsStream GetOrCreateSdsStream(StreamsClient streamsClient, Gson mGson, String tenantId, String namespaceId, SdsStream sampleStream) throws SdsError {        
+        String jsonStream = "";
+        try {
+        	jsonStream = streamsClient.getStream(tenantId,  namespaceId, sampleStream.getId());
+        }
+        catch (SdsError e) {
+        	if (e.getHttpStatusCode() == 404) {
+                jsonStream = streamsClient.createStream(tenantId, namespaceId, sampleStream);
+        	} else {
+        		throw e;
+        	}
+        }
+        
+        return mGson.fromJson(jsonStream, SdsStream.class);
     }
 
     public static void cleanUp(TypesClient typesClient, StreamsClient streamsClient) throws SdsError {
