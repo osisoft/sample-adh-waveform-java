@@ -925,7 +925,8 @@ public class Program {
 
             if (bytesToRead > 0) {
                 byte[] bytes = new byte[bytesToRead];
-                inputStream.read(bytes);
+                if (inputStream.read(bytes) != bytesToRead)
+                    System.out.println("Error reading input stream");
                 fileString = new String(bytes);
             }
 
