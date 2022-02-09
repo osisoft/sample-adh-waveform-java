@@ -88,7 +88,6 @@ public class Program {
             cleanUp(typesClient, streamsClient);
             System.out.println("done");
         } catch (SdsError e) {
-            continue;
         }
 
         try {
