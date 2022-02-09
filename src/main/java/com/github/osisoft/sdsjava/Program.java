@@ -81,7 +81,16 @@ public class Program {
             communitiesClient = adhClient.Communities;
         }
         
-        // cleanup anything remaining from previous runs
+        try {
+            // clean up anything remaining from previous runs
+            System.out.println();
+            System.out.println("Cleaning up");
+            cleanUp(typesClient, streamsClient);
+            System.out.println("done");
+        } catch (SdsError e) {
+            printError("Error deleting the Sds Objects", e);
+            handleException(e);
+        }
         cleanUp(typesClient, streamsClient);
 
         try {
