@@ -85,7 +85,7 @@ public class Program {
             // clean up anything remaining from previous runs
             System.out.println();
             System.out.println("Cleaning up");
-            cleanUp(typesClient, streamsClient);
+            cleanUp(typesClient, streamsClient, true);
             System.out.println("done");
         } catch (SdsError e) {
         }
@@ -641,7 +641,7 @@ public class Program {
                 // Step 25
                 System.out.println();
                 System.out.println("Cleaning up");
-                cleanUp(typesClient, streamsClient);
+                cleanUp(typesClient, streamsClient, false);
                 System.out.println("done");
             } catch (SdsError e) {
                 printError("Error deleting the Sds Objects", e);
@@ -971,56 +971,65 @@ public class Program {
         e.printStackTrace();
     }
 
-    public static void cleanUp(TypesClient typesClient, StreamsClient streamsClient) throws SdsError {
+    public static void cleanUp(TypesClient typesClient, StreamsClient streamsClient, Boolean silent) throws SdsError {
         System.out.println("Deleting the stream");
         try {
             streamsClient.deleteStream(tenantId, namespaceId, sampleStreamId);
         } catch (SdsError e) {
-            handleException(e);
+            if (!silent)
+                handleException(e);
         }
         try {
             streamsClient.deleteStream(tenantId, namespaceId, streamIdSecondary);
         } catch (SdsError e) {
-            handleException(e);
+            if (!silent)
+                handleException(e);
         }
         try {
             streamsClient.deleteStream(tenantId, namespaceId, streamIdCompound);
         } catch (SdsError e) {
-            handleException(e);
+            if (!silent)
+                handleException(e);
         }
  
         System.out.println("Deleting the streamViews");
         try {
             streamsClient.deleteStreamView(tenantId, namespaceId, sampleStreamViewId);
         } catch (SdsError e) {
-            handleException(e);
+            if (!silent)
+                handleException(e);
         }
         try {
             streamsClient.deleteStreamView(tenantId, namespaceId, sampleManualStreamViewId);
         } catch (SdsError e) {
-            handleException(e);
+            if (!silent)
+                handleException(e);
         }
 
         System.out.println("Deleting the types");
         try {
             typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
         } catch (SdsError e) {
-            handleException(e);
+            if (!silent)
+                handleException(e);
         }
         try {
             typesClient.deleteType(tenantId, namespaceId, targetTypeId);
         } catch (SdsError e) {
-            handleException(e);
+            if (!silent)
+                handleException(e);
         }
         try {
             typesClient.deleteType(tenantId, namespaceId, integerTargetTypeId);
         } catch (SdsError e) {
-            handleException(e);
+            if (!silent)
+                handleException(e);
         }
         try {
             typesClient.deleteType(tenantId, namespaceId, compoundTypeId);
         } catch (SdsError e) {
-            handleException(e);
+            if (!silent)
+                handleException(e);
         }
     }
 }
