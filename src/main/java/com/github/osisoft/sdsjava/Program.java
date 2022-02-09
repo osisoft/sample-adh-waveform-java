@@ -88,8 +88,7 @@ public class Program {
             cleanUp(typesClient, streamsClient);
             System.out.println("done");
         } catch (SdsError e) {
-            printError("Error deleting the Sds Objects", e);
-            handleException(e);
+            continue;
         }
 
         try {
