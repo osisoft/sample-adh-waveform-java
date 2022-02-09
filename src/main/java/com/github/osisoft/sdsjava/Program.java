@@ -91,7 +91,6 @@ public class Program {
             printError("Error deleting the Sds Objects", e);
             handleException(e);
         }
-        cleanUp(typesClient, streamsClient);
 
         try {
             // Step 2
