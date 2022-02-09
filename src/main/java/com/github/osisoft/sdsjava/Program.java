@@ -80,6 +80,9 @@ public class Program {
             rolesClient = adhClient.Roles;
             communitiesClient = adhClient.Communities;
         }
+        
+        // cleanup anything remaining from previous runs
+        cleanUp(typesClient, streamsClient);
 
         try {
             // Step 2
