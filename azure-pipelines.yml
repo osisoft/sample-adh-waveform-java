@@ -38,9 +38,9 @@ variables:
     value: SDS_Java
 
 jobs:
-  - job: Tests_OCS
+  - job: Tests_ADH
     strategy:
-      maxParallel: 1 # Avoid conflicts in OCS
+      maxParallel: 1 # Avoid conflicts in ADH
       matrix:
         linux:
           agentOS: Linux
@@ -57,7 +57,7 @@ jobs:
 
       - template: '/miscellaneous/build_templates/appsettings.yml@templates'
         parameters:
-          secrets: 'TenantId, NamespaceId, CommunityId, ClientId, ClientSecret'
+          secrets: 'TenantId, NamespaceId, CommunityId, ClientId, ClientSecret, Resource'
 
       - task: JavaToolInstaller@0
         inputs:

@@ -70,15 +70,15 @@ public class Program {
             typesClient = edsClient.Types;
             streamsClient = edsClient.Streams;
         } else {
-            OCSClient ocsClient = new OCSClient(appsettings.getApiVersion(), 
+            ADHClient adhClient = new ADHClient(appsettings.getApiVersion(), 
                                                 appsettings.getTenantId(), 
                                                 appsettings.getClientId(), 
                                                 appsettings.getClientSecret(), 
                                                 appsettings.getResource());
-            typesClient = ocsClient.Types;
-            streamsClient = ocsClient.Streams;
-            rolesClient = ocsClient.Roles;
-            communitiesClient = ocsClient.Communities;
+            typesClient = adhClient.Types;
+            streamsClient = adhClient.Streams;
+            rolesClient = adhClient.Roles;
+            communitiesClient = adhClient.Communities;
         }
 
         try {
@@ -394,7 +394,7 @@ public class Program {
 
             if (!tenantId.equals("default")) {
                 // Step 16
-                // tags and metadata (OCS ONLY)
+                // tags and metadata (ADH ONLY)
                 System.out.println("Let's add some Tags and Metadata to our stream:");
                 System.out.println();
 
@@ -432,7 +432,7 @@ public class Program {
                 System.out.println();
 
                 // Step 17
-                // update metadata (OCS ONLY)
+                // update metadata (ADH ONLY)
                 System.out.println("Let's update the Metadata on our stream:");
                 System.out.println();
 

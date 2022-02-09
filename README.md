@@ -1,8 +1,11 @@
 # Sequential Data Store Java Sample
 
-**Version:** 1.1.7
+| :loudspeaker: **Notice**: Samples have been updated to reflect that they work on AVEVA Data Hub. The samples also work on OSIsoft Cloud Services unless otherwise noted. |
+| -----------------------------------------------------------------------------------------------|  
 
-[![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/OCS/osisoft.sample-ocs-waveform-java?repoName=osisoft%2Fsample-ocs-waveform-java&branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2629&repoName=osisoft%2Fsample-ocs-waveform-java&branchName=main)
+**Version:** 1.2.1
+
+[![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/ADH/aveva.sample-adh-waveform-java?branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2629&branchName=main)
 
 The sample code described in this topic demonstrates how to use Java to store and retrieve data from SDS using only the SDS REST API. By examining the code, you will see how to establish a connection to SDS, obtain an authorization token, obtain an SdsNamespace, create an SdsType and SdsStream, and how to create, read, update, and delete values in SDS.
 
@@ -29,7 +32,7 @@ Developed against Maven 3.6.1 and Java 1.8.0_181.
 
 This sample is written using the ocs_sample_library_preview library which uses the SDS REST API. The API allows you to create SDS Service clients in any language that can make HTTP calls. Objects are passed between client and server as JSON strings. The sample uses the Gson library for the Java client, but you can use any method to create a JSON representation of objects.
 
-## Instantiate an OCSClient or EDSClient
+## Instantiate an ADHClient or EDSClient
 
 Each REST API call consists of an HTTP request along with a specific URL and HTTP method. The URL contains the server name plus the extension that is specific to the call. Like all REST APIs, the SDS REST API maps HTTP methods to CRUD operations as shown in the following table:
 
@@ -40,19 +43,19 @@ Each REST API call consists of an HTTP request along with a specific URL and HTT
 | PUT         | Update         | message body     |
 | DELETE      | Delete         | URL parameters   |
 
-The constructor for the OCSClient and EDSClient classes take the base URL (that is, the protocol, server address and port number) and the api version. They also create a new Gson serializer/deserializer to convert between Java Objects and JSON. This is all done in a shared baseClient that is used amongst the the various services that we can interact with.
+The constructor for the ADHClient and EDSClient classes take the base URL (that is, the protocol, server address and port number) and the api version. They also create a new Gson serializer/deserializer to convert between Java Objects and JSON. This is all done in a shared baseClient that is used amongst the the various services that we can interact with.
 
 The sample library specifies to use `gzip` compression by adding the `Accept-Encoding` header to each request inside the `BaseClient.getConnection()` method, and decompressing the response inside the `BaseClient.getResponse()` method.
 
 ## Configure the Sample
 
-Included in the sample is a configuration file with placeholders that need to be replaced with the proper values. They include information for authentication, connecting to OCS, and pointing to a namespace.
+Included in the sample is a configuration file with placeholders that need to be replaced with the proper values. They include information for authentication, connecting to ADH, and pointing to a namespace.
 
-### OSIsoft Cloud Services
+### AVEVA Data Hub
 
 The SDS Service is secured using Azure Active Directory. The sample application is an example of a _confidential client_. Confidential clients provide an application ID and secret that are authenticated against the directory. These are referred to as client IDs and client secrets, which are associated with a given tenant. They are created through the tenant's administration portal. The steps necessary to create a new client ID and secret are described below.
 
-First, log on to the [Cloud Portal](http://cloud.osisoft.com) with admin credentials and navigate to the `Client Keys` page under the `Manage` tab, which is situated along the top of the webpage. Two types of keys may be created. For a complete explanation of key roles look at the help bar on the right side of the page. This sample program covers data creation, deletion and retrieval, so an administration key must be used in the configuration file. Creating a new key is simple. Enter a name for the key, select `Administrator role`, then click `Add Key`.
+First, log on to the [Data Hub](http://datahub.connect.aveva.com) with admin credentials and navigate to the `Client Keys` page under the `Manage` tab, which is situated along the top of the webpage. Two types of keys may be created. For a complete explanation of key roles look at the help bar on the right side of the page. This sample program covers data creation, deletion and retrieval, so an administration key must be used in the configuration file. Creating a new key is simple. Enter a name for the key, select `Administrator role`, then click `Add Key`.
 
 Next, view the key by clicking the small eye icon on the right of the created key, located in the list of available keys. A pop-up will appear with the tenant ID, client ID and client secret. These must replace the corresponding values in the sample's configuration file.
 
@@ -75,7 +78,7 @@ The values to be replaced are in `appsettings.json`:
 
 ```json
 {
-  "Resource": "https://dat-b.osisoft.com",
+  "Resource": "https://uswe.datahub.connect.aveva.com",
   "ApiVersion": "v1",
   "TenantId": "PLACEHOLDER_REPLACE_WITH_TENANT_ID",
   "NamespaceId": "PLACEHOLDER_REPLACE_WITH_NAMESPACE_ID",
@@ -138,8 +141,8 @@ type.Properties = props;
 The WaveData type is created in SDS using the `createType` method in SdsClient.java.
 
 ```java
-String evtTypeString = ocsClient.Types.CreateType(type);
-evtType = ocsClient.mGson.fromJson(evtTypeString, SdsType.class);
+String evtTypeString = adhClient.Types.CreateType(type);
+evtType = adhClient.mGson.fromJson(evtTypeString, SdsType.class);
 ```
 
 All SdsTypes are constructed in a similar manner. Basic SdsTypes form the basis for SdsTypeProperties, which are then assigned to a complex user-defined type. These types can then be used in properties and become part of another SdsType's property list.
@@ -150,8 +153,8 @@ A SdsStream stores an ordered series of events. To create a SdsStream instance, 
 
 ```java
 SdsStream sampleStream = new SdsStream(sampleStreamId, sampleTypeId);
-String streamJson = ocsClient.Streams.createStream(tenantId, namespaceId, sampleStream);
-sampleStream = ocsClient.mGson.fromJson(streamJson, SdsStream.class);
+String streamJson = adhClient.Streams.createStream(tenantId, namespaceId, sampleStream);
+sampleStream = adhClient.mGson.fromJson(streamJson, SdsStream.class);
 ```
 
 Note that you set the `TypeId` property of the stream to the Id of the SdsType previously created. SdsTypes are reference counted, so after a type is assigned to one or more streams, it cannot be deleted until all streams that reference it are deleted.
@@ -167,7 +170,7 @@ The main program creates a single `WaveData` event with the `Order` value of zer
 List<WaveData> event = new ArrayList<WaveData>();
 WaveData evt = WaveData.next(1, 2.0, 0);
 event.add(evt);
-ocsClient.Streams.insertValues(tenantId, namespaceId, sampleStreamId, sdsclient.mGson.toJson(event));
+adhClient.Streams.insertValues(tenantId, namespaceId, sampleStreamId, sdsclient.mGson.toJson(event));
 
 // insert an a collection of events
 List<WaveData> events = new ArrayList<WaveData>();
@@ -175,7 +178,7 @@ for (int i = 2; i < 20; i+=2) {
 evt = WaveData.next(1, 2.0, i);
 events.add(evt);
 }
-ocsClient.Streams.insertValues(tenantId, namespaceId, sampleStreamId, sdsclient.mGson.toJson(events));
+adhClient.Streams.insertValues(tenantId, namespaceId, sampleStreamId, sdsclient.mGson.toJson(events));
 ```
 
 ## Retrieve Values from a Stream
@@ -187,37 +190,37 @@ In this sample, five of the available methods are implemented in StreamsClient: 
 Get single value:
 
 ```java
-String jsonSingleValue = ocsClient.Streams.getValue(tenantId, namespaceId, sampleStreamId, "0");
-WaveData data = ocsClient.mGson.fromJson(jsonSingleValue, WaveData.class);
+String jsonSingleValue = adhClient.Streams.getValue(tenantId, namespaceId, sampleStreamId, "0");
+WaveData data = adhClient.mGson.fromJson(jsonSingleValue, WaveData.class);
 ```
 
 Get last value inserted:
 
 ```java
-jsonSingleValue = ocsClient.Streams.getLastValue(tenantId, namespaceId, sampleStreamId);
-data = ocsClient.mGson.fromJson(jsonSingleValue, WaveData.class));
+jsonSingleValue = adhClient.Streams.getLastValue(tenantId, namespaceId, sampleStreamId);
+data = adhClient.mGson.fromJson(jsonSingleValue, WaveData.class));
 ```
 
 Get window of values:
 
 ```java
-String jsonMultipleValues = ocsClient.Streams.getWindowValues(tenantId, namespaceId, sampleStreamId, "0", "18");
+String jsonMultipleValues = adhClient.Streams.getWindowValues(tenantId, namespaceId, sampleStreamId, "0", "18");
 Type listType = new TypeToken<ArrayList<WaveData>>() {}.getType(); // necessary for gson to decode list of WaveData, represents ArrayList<WaveData> type
-ArrayList<WaveData> foundEvents = ocsClient.mGson.fromJson(jsonMultipleValues, listType);
+ArrayList<WaveData> foundEvents = adhClient.mGson.fromJson(jsonMultipleValues, listType);
 ```
 
 Get range of values:
 
 ```java
-jsonMultipleValues = ocsClient.Streams.getRangeValues(tenantId, namespaceId, sampleStreamId, "1", 0, 3, false, SdsBoundaryType.ExactOrCalculated);
-foundEvents = ocsClient.mGson.fromJson(jsonMultipleValues, listType);
+jsonMultipleValues = adhClient.Streams.getRangeValues(tenantId, namespaceId, sampleStreamId, "1", 0, 3, false, SdsBoundaryType.ExactOrCalculated);
+foundEvents = adhClient.mGson.fromJson(jsonMultipleValues, listType);
 ```
 
 Get sampled values:
 
 ```java
-jsonMultipleValues = ocsClient.Streams.getSampledValues(tenantId, namespaceId, sampleStreamId, "0", "40", 4, "Sin");
-foundEvents = ocsClient.mGson.fromJson(jsonMultipleValues, listType);
+jsonMultipleValues = adhClient.Streams.getSampledValues(tenantId, namespaceId, sampleStreamId, "0", "40", 4, "Sin");
+foundEvents = adhClient.mGson.fromJson(jsonMultipleValues, listType);
 ```
 
 ## Updating and Replacing Values
@@ -227,15 +230,15 @@ The examples in this section demonstrate updates by taking the values that were 
 After you have modified the client-side events, you submit them to the SDS Service with `updateValues` as shown here:
 
 ```java
-ocsClient.Streams.updateValues(tenantId, namespaceId, sampleStreamId, ocsClient.mGson.toJson(newEvent));
-ocsClient.Streams.updateValues(tenantId, namespaceId, sampleStreamId, ocsClient.mGson.toJson(newEvents));
+adhClient.Streams.updateValues(tenantId, namespaceId, sampleStreamId, adhClient.mGson.toJson(newEvent));
+adhClient.Streams.updateValues(tenantId, namespaceId, sampleStreamId, adhClient.mGson.toJson(newEvents));
 ```
 
 In contrast to updating, replacing a value only considers existing values and will not insert any new values into the stream. The sample program demonstrates this by replacing all twenty values. The calling conventions are identical to `updateValues`:
 
 ```java
-ocsClient.Streams.replaceValues(tenantId, namespaceId, sampleStreamId, ocsClient.mGson.toJson(newEvent));
-ocsClient.Streams.replaceValues(tenantId, namespaceId, sampleStreamId, ocsClient.mGson.toJson(newEvents));
+adhClient.Streams.replaceValues(tenantId, namespaceId, sampleStreamId, adhClient.mGson.toJson(newEvent));
+adhClient.Streams.replaceValues(tenantId, namespaceId, sampleStreamId, adhClient.mGson.toJson(newEvents));
 ```
 
 ## Property Overrides
@@ -254,7 +257,7 @@ propertyOverrides.add(propertyOverride);
 
 // update the stream
 sampleStream.setPropertyOverrides(propertyOverrides);
-ocsClient.Streams.updateStream(tenantId, namespaceId, sampleStreamId, sampleStream);
+adhClient.Streams.updateStream(tenantId, namespaceId, sampleStreamId, sampleStream);
 ```
 
 The process consists of two steps. First, the Property Override must be created, then the stream must be updated. Note that the sample retrieves three data points before and after updating the stream to show that it has changed. See the [SDS documentation](https://ocs-docs.osisoft.com/Content_Portal/Documentation/SequentialDataStore/Data_Store_and_SDS.html) for more information about SDS Property Overrides.
@@ -266,7 +269,7 @@ A SdsStreamView provides a way to map stream data requests from one data type to
 SDS attempts to determine how to map properties from the source to the destination. When the mapping is straightforward, such as when the properties are in the same position and of the same data type, or when the properties have the same name, SDS will map the properties automatically.
 
 ```java
-jsonMultipleValues = ocsClient.Streams.getRangeValues(tenantId, namespaceId, sampleStream.getId(), "1", 0, 3, false, SdsBoundaryType.ExactOrCalculated, sampleStreamViewId);
+jsonMultipleValues = adhClient.Streams.getRangeValues(tenantId, namespaceId, sampleStream.getId(), "1", 0, 3, false, SdsBoundaryType.ExactOrCalculated, sampleStreamViewId);
 ```
 
 To map a property that is beyond the ability of SDS to map on its own, you should define an SdsStreamViewProperty and add it to the SdsStreamView's Properties collection.
@@ -290,7 +293,7 @@ manualStreamView.setProperties(props);
 When an SdsStreamView is added, SDS defines a plan mapping. Plan details are retrieved as an SdsStreamViewMap. The SdsStreamViewMap provides a detailed Property-by-Property definition of the mapping. The SdsStreamViewMap cannot be written, it can only be retrieved from SDS.
 
 ```java
-String jsonStreamViewMap = ocsClient.Streams.getStreamViewMap(tenantId, namespaceId, sampleStreamViewId);
+String jsonStreamViewMap = adhClient.Streams.getStreamViewMap(tenantId, namespaceId, sampleStreamViewId);
 ```
 
 ## Deleting Values from a Stream
@@ -298,8 +301,8 @@ String jsonStreamViewMap = ocsClient.Streams.getStreamViewMap(tenantId, namespac
 There are two methods in the sample that illustrate removing values from a stream of data. The first method deletes only a single value. The second method removes a window of values, much like retrieving a window of values. Removing values depends on the value's key type ID value. If a match is found within the stream, then that value will be removed. Below are the declarations of both functions:
 
 ```java
-ocsClient.Streams.removeValue(tenantId, namespaceId, sampleStreamId, "0");
-ocsClient.Streams.removeWindowValues(tenantId, namespaceId, sampleStreamId, "2", "40");
+adhClient.Streams.removeValue(tenantId, namespaceId, sampleStreamId, "0");
+adhClient.Streams.removeWindowValues(tenantId, namespaceId, sampleStreamId, "2", "40");
 ```
 
 As when retrieving a window of values, removing a window is inclusive; that is, both values corresponding to Order=2 and Order=40 are removed from the stream.
@@ -310,12 +313,12 @@ Notice that there are more methods provided in SdsClient than are discussed in t
 
 ```java
 // get a single stream
-String stream = ocsClient.Streams.getStream(tenantId, namespaceId, sampleStreamId);
-SdsStream = ocsClient.mGson.fromJson(returnedStream, SdsStream.class));
+String stream = adhClient.Streams.getStream(tenantId, namespaceId, sampleStreamId);
+SdsStream = adhClient.mGson.fromJson(returnedStream, SdsStream.class));
 // get multiple streams
-String returnedStreams = ocsClient.Streams.getStreams(tenantId, namespaceId, "","0", "100");
+String returnedStreams = adhClient.Streams.getStreams(tenantId, namespaceId, "","0", "100");
 Type streamListType = new TypeToken<ArrayList<SdsStream>>(){}.getType();
-ArrayList<SdsStream> streams = ocsClient.mGson.fromJson(returnedStreams, streamListType);
+ArrayList<SdsStream> streams = adhClient.mGson.fromJson(returnedStreams, streamListType);
 ```
 
 For a complete list of HTTP request URLs refer to the [SDS documentation](https://ocs-docs.osisoft.com/Content_Portal/Documentation/SequentialDataStore/Data_Store_and_SDS.html).
@@ -325,20 +328,20 @@ For a complete list of HTTP request URLs refer to the [SDS documentation](https:
 In order for the program to run repeatedly without collisions, the sample performs some cleanup before exiting. Deleting streams, stream, stream views and types can be achieved by a DELETE REST call and passing the corresponding Id.
 
 ```java
-ocsClient.Streams.deleteStream(tenantId, namespaceId, sampleStreamId);
-ocsClient.Streams.deleteStreamView(tenantId, namespaceId, sampleStreamViewId);
+adhClient.Streams.deleteStream(tenantId, namespaceId, sampleStreamId);
+adhClient.Streams.deleteStreamView(tenantId, namespaceId, sampleStreamViewId);
 ```
 
 Note that the IDs of the objects are passed, not the object themselves. Similarly, the following code deletes the type from the SDS Service:
 
 ```java
-ocsClient.Types.deleteType(tenantId, namespaceId, sampleTypeId);
+adhClient.Types.deleteType(tenantId, namespaceId, sampleTypeId);
 ```
 
 ---
 
 Tested against Maven 3.6.1 and Java 1.8.0_212.
 
-For the main OCS waveform samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS/blob/main/docs/SDS_WAVEFORM.md)  
-For the main OCS samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS)  
-For the main OSIsoft samples page [ReadMe](https://github.com/osisoft/OSI-Samples)
+For the main ADH waveform samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS/blob/main/docs/SDS_WAVEFORM.md)  
+For the main ADH samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS)  
+For the main AVEVA samples page [ReadMe](https://github.com/osisoft/OSI-Samples)
