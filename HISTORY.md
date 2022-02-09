@@ -1,5 +1,10 @@
 # Version History
 
+## 1.2.0 / 2022-01-27
+
+- Updated for AVEVA Data Hub
+- Updated dependencies
+
 ## 1.1.6 / 2022-01-13
 
 - Resolved Polaris scan finding
