@@ -44,7 +44,7 @@ public class Program {
     static Boolean success = true;
 
     public static void main(String[] args) throws InterruptedException {
-        toRun();
+        toRun(false);
     }
 
     public static boolean toRun(boolean test) {
