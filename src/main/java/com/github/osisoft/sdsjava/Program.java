@@ -47,7 +47,7 @@ public class Program {
         toRun();
     }
 
-    public static boolean toRun() {
+    public static boolean toRun(boolean test) {
         // Create Sds client to communicate with server
         System.out.println("---------------------------------------------------");
         System.out.println("  _________    .___          ____.                    ");
@@ -81,13 +81,15 @@ public class Program {
             communitiesClient = adhClient.Communities;
         }
         
-        try {
-            // clean up anything remaining from previous runs
-            System.out.println();
-            System.out.println("Cleaning up");
-            cleanUp(typesClient, streamsClient, true);
-            System.out.println("done");
-        } catch (SdsError e) {
+        // clean up anything remaining from previous runs
+        if (test)
+            try {
+                System.out.println();
+                System.out.println("Cleaning up");
+                cleanUp(typesClient, streamsClient, true);
+                System.out.println("done");
+            } catch (SdsError e) {
+            }
         }
 
         try {
