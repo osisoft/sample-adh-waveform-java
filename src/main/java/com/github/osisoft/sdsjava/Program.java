@@ -82,7 +82,7 @@ public class Program {
         }
         
         // clean up anything remaining from previous runs
-        if (test)
+        if (test) {
             try {
                 System.out.println();
                 System.out.println("Cleaning up");
