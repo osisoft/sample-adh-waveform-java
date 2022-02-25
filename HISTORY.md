@@ -1,5 +1,9 @@
 # Version History
 
+## 1.2.2 / 2022-02-26
+
+- Use silent initial clean up for testing
+
 ## 1.2.1 / 2022-02-9
 
 - Changed agent used in pipeline
