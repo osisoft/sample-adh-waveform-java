@@ -643,8 +643,8 @@ public class Program {
                 // Step 25
                 System.out.println();
                 System.out.println("Cleaning up");
-                cleanUp(typesClient, streamsClient, false);
-                System.out.println("done");
+                cleanUp(typesClient, streamsClient, true);
+                System.out.println("Done");
             } catch (SdsError e) {
                 printError("Error deleting the Sds Objects", e);
                 handleException(e);
