@@ -1010,25 +1010,25 @@ public class Program {
 
         System.out.println("Deleting the types");
         try {
-            typesClient.deleteType(tenantId, namespaceId, targetTypeId);
+            System.out.println("targetTypeId: " + typesClient.getType(tenantId, namespaceId, targetTypeId));
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
         }
         try {
-            typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
+            System.out.println("sampleTypeId: " + typesClient.getType(tenantId, namespaceId, sampleTypeId));
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
         }
         try {
-            typesClient.deleteType(tenantId, namespaceId, integerTargetTypeId);
+            System.out.println("integerTargetTypeId: " + typesClient.getType(tenantId, namespaceId, integerTargetTypeId));
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
         }
         try {
-            typesClient.deleteType(tenantId, namespaceId, compoundTypeId);
+            System.out.println("compoundTypeId: " + typesClient.getType(tenantId, namespaceId, compoundTypeId));
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
