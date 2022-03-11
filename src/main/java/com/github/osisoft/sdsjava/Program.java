@@ -88,6 +88,10 @@ public class Program {
                 System.out.println("Cleaning up");
                 cleanUp(typesClient, streamsClient, true);
                 System.out.println("done");
+
+                System.out.println("Types + " + typesClient.getTypes(tenantId, namespaceId, 0, 100));
+                System.out.println("Streams" + streamsClient.getStreams(tenantId, namespaceId, "*", "0", "100"));
+
             } catch (SdsError e) {
             }
         }
