@@ -994,7 +994,7 @@ public class Program {
                 handleException(e);
         }
  
-        System.out.println("Deleting the streamViews");
+        System.out.println("Deleting the stream views");
         try {
             streamsClient.deleteStreamView(tenantId, namespaceId, sampleStreamViewId);
         } catch (SdsError e) {
