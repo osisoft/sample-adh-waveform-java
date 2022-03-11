@@ -1,6 +1,6 @@
 # Version History
 
-## 1.2.2 / 2022-02-26
+## 1.2.2 / 2022-03-11
 
 - Use silent initial clean up for testing
 
