@@ -30,16 +30,16 @@ public class Program {
     static String communityId = appsettings.getCommunityId();
 
     // id strings
-    static String sampleTypeId = "WaveData_SampleType";
-    static String targetTypeId = "WaveData_SampleTargetType";
-    static String integerTargetTypeId = "WaveData_SampleIntegerTargetType";
-    static String sampleStreamId = "WaveData_SampleStream";
-    static String sampleStreamViewId = "WaveData_SampleStreamView";
-    static String sampleManualStreamViewId = "WaveData_SampleManualStreamView";
+    static String sampleTypeId = "WaveData_SampleType1";
+    static String targetTypeId = "WaveData_SampleTargetType1";
+    static String integerTargetTypeId = "WaveData_SampleIntegerTargetType1";
+    static String sampleStreamId = "WaveData_SampleStream1";
+    static String sampleStreamViewId = "WaveData_SampleStreamView1";
+    static String sampleManualStreamViewId = "WaveData_SampleManualStreamView1";
 
-    static String streamIdSecondary = "SampleStream_Secondary";
-    static String streamIdCompound = "SampleStream_Compound";
-    static String compoundTypeId = "SampleType_Compound";
+    static String streamIdSecondary = "SampleStream_Secondary1";
+    static String streamIdCompound = "SampleStream_Compound1";
+    static String compoundTypeId = "SampleType_Compound1";
 
     static Boolean success = true;
 
