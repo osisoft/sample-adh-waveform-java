@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
@@ -84,6 +85,14 @@ public class Program {
         // clean up anything remaining from previous runs
         if (test) {
             try {
+                String currentTypes = typesClient.getTypes(tenantId, namespaceId, 0, 100);
+                
+                List<SdsType> jsonTypes = mGson.fromJson(currentTypes, new TypeToken<List<SdsType>>(){}.getType());
+
+                for (int i = 0; i < jsonTypes.size(); i++) {
+                    typesClient.deleteType(tenantId, namespaceId, jsonTypes.get(i).getId());
+                }
+
                 System.out.println("Types + " + typesClient.getTypes(tenantId, namespaceId, 0, 100));
                 System.out.println("Streams" + streamsClient.getStreams(tenantId, namespaceId, "*", "0", "100"));
 
