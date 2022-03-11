@@ -3,7 +3,11 @@ package com.github.osisoft.sdsjava;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import com.github.osisoft.ocs_sample_library_preview.*;
@@ -85,13 +90,20 @@ public class Program {
         // clean up anything remaining from previous runs
         if (test) {
             try {
-                String currentTypes = typesClient.getTypes(tenantId, namespaceId, 0, 100);
-                
-                List<SdsType> jsonTypes = mGson.fromJson(currentTypes, new TypeToken<List<SdsType>>(){}.getType());
 
-                for (int i = 0; i < jsonTypes.size(); i++) {
-                    typesClient.deleteType(tenantId, namespaceId, jsonTypes.get(i).getId());
+                try {
+                    getStreamViews(tenantId, namespaceId);
+                    String currentTypes = typesClient.getTypes(tenantId, namespaceId, 0, 100);
+                
+                    List<SdsType> jsonTypes = mGson.fromJson(currentTypes, new TypeToken<List<SdsType>>(){}.getType());
+    
+                    for (int i = 0; i < jsonTypes.size(); i++) {
+                        typesClient.deleteType(tenantId, namespaceId, jsonTypes.get(i).getId());
+                    }
+                } catch (SdsError e ) {
+
                 }
+
 
                 System.out.println("Types + " + typesClient.getTypes(tenantId, namespaceId, 0, 100));
                 System.out.println("Streams" + streamsClient.getStreams(tenantId, namespaceId, "*", "0", "100"));
@@ -978,6 +990,24 @@ public class Program {
         add.add("value", new Gson().toJsonTree(entry));
         patch.add(add);
         return patch;
+    }
+
+    
+    public static void getStreamViews(String tenantId, String namespaceId) {
+        try {
+            URL tenant = new URL("http://localhost:5590" + "api/v1/Tenants/default/Namespaces/default/StreamViews");
+            HttpURLConnection tenantRequest = (HttpURLConnection) tenant.openConnection();
+            tenantRequest.connect();
+            
+            JsonObject rootObj = JsonParser.parseReader(new InputStreamReader((InputStream) tenantRequest.getContent(), StandardCharsets.UTF_8))
+                .getAsJsonObject();
+
+            System.out.println(rootObj);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void handleException(SdsError e) {
