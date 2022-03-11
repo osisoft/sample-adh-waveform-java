@@ -3,11 +3,7 @@ package com.github.osisoft.sdsjava;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,9 +12,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import com.github.osisoft.ocs_sample_library_preview.*;
@@ -90,13 +84,10 @@ public class Program {
         // clean up anything remaining from previous runs
         if (test) {
             try {
-                System.out.println("Types + " + typesClient.getTypes(tenantId, namespaceId, 0, 100));
-                System.out.println("Streams" + streamsClient.getStreams(tenantId, namespaceId, "*", "0", "100"));
-
                 System.out.println();
                 System.out.println("Cleaning up");
                 cleanUp(typesClient, streamsClient, true);
-                System.out.println("done");
+                System.out.println("Initial Cleaning Done");
             } catch (SdsError e) {
             }
         }
@@ -977,24 +968,6 @@ public class Program {
         return patch;
     }
 
-    
-    public static void getStreamViews(String tenantId, String namespaceId) {
-        try {
-            URL tenant = new URL("http://localhost:5590/" + "api/v1/Tenants/default/Namespaces/default/StreamViews");
-            HttpURLConnection tenantRequest = (HttpURLConnection) tenant.openConnection();
-            tenantRequest.connect();
-            
-            JsonObject rootObj = JsonParser.parseReader(new InputStreamReader((InputStream) tenantRequest.getContent(), StandardCharsets.UTF_8))
-                .getAsJsonObject();
-
-            System.out.println(rootObj);
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void handleException(SdsError e) {
         success = false;
         e.printStackTrace();
@@ -1023,12 +996,6 @@ public class Program {
  
         System.out.println("Deleting the streamViews");
         try {
-            streamsClient.deleteStreamView(tenantId, namespaceId, "WaveData_SampleIntStreamView");
-        } catch (SdsError e) {
-            if (!silent)
-                handleException(e);
-        }
-        try {
             streamsClient.deleteStreamView(tenantId, namespaceId, sampleStreamViewId);
         } catch (SdsError e) {
             if (!silent)
@@ -1044,18 +1011,6 @@ public class Program {
         System.out.println("Deleting the types");
         try {
             typesClient.deleteType(tenantId, namespaceId, targetTypeId);
-        } catch (SdsError e) {
-            if (!silent)
-                handleException(e);
-        }
-        try {
-            typesClient.deleteType(tenantId, namespaceId, "WaveDataTarget_SampleType");
-        } catch (SdsError e) {
-            if (!silent)
-                handleException(e);
-        }
-        try {
-            typesClient.deleteType(tenantId, namespaceId, "WaveData_IntegerType");
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
