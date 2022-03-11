@@ -974,7 +974,7 @@ public class Program {
     }
 
     public static void cleanUp(TypesClient typesClient, StreamsClient streamsClient, Boolean silent) throws SdsError {
-        System.out.println("Deleting the stream");
+        System.out.println("Deleting the streams");
         try {
             streamsClient.deleteStream(tenantId, namespaceId, sampleStreamId);
         } catch (SdsError e) {
@@ -1010,13 +1010,13 @@ public class Program {
 
         System.out.println("Deleting the types");
         try {
-            typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
+            typesClient.deleteType(tenantId, namespaceId, targetTypeId);
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
         }
         try {
-            typesClient.deleteType(tenantId, namespaceId, targetTypeId);
+            typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
