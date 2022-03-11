@@ -995,7 +995,7 @@ public class Program {
     
     public static void getStreamViews(String tenantId, String namespaceId) {
         try {
-            URL tenant = new URL("http://localhost:5590" + "api/v1/Tenants/default/Namespaces/default/StreamViews");
+            URL tenant = new URL("http://localhost:5590/" + "api/v1/Tenants/default/Namespaces/default/StreamViews");
             HttpURLConnection tenantRequest = (HttpURLConnection) tenant.openConnection();
             tenantRequest.connect();
             
