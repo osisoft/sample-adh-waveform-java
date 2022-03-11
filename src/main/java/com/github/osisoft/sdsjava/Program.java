@@ -90,21 +90,6 @@ public class Program {
         // clean up anything remaining from previous runs
         if (test) {
             try {
-
-                try {
-                    getStreamViews(tenantId, namespaceId);
-                    String currentTypes = typesClient.getTypes(tenantId, namespaceId, 0, 100);
-                
-                    List<SdsType> jsonTypes = mGson.fromJson(currentTypes, new TypeToken<List<SdsType>>(){}.getType());
-    
-                    for (int i = 0; i < jsonTypes.size(); i++) {
-                        typesClient.deleteType(tenantId, namespaceId, jsonTypes.get(i).getId());
-                    }
-                } catch (SdsError e ) {
-
-                }
-
-
                 System.out.println("Types + " + typesClient.getTypes(tenantId, namespaceId, 0, 100));
                 System.out.println("Streams" + streamsClient.getStreams(tenantId, namespaceId, "*", "0", "100"));
 
@@ -1038,6 +1023,12 @@ public class Program {
  
         System.out.println("Deleting the streamViews");
         try {
+            streamsClient.deleteStreamView(tenantId, namespaceId, "WaveData_SampleIntStreamView");
+        } catch (SdsError e) {
+            if (!silent)
+                handleException(e);
+        }
+        try {
             streamsClient.deleteStreamView(tenantId, namespaceId, sampleStreamViewId);
         } catch (SdsError e) {
             if (!silent)
@@ -1052,25 +1043,37 @@ public class Program {
 
         System.out.println("Deleting the types");
         try {
-            System.out.println("targetTypeId: " + typesClient.getType(tenantId, namespaceId, targetTypeId));
+            typesClient.deleteType(tenantId, namespaceId, targetTypeId);
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
         }
         try {
-            System.out.println("sampleTypeId: " + typesClient.getType(tenantId, namespaceId, sampleTypeId));
+            typesClient.deleteType(tenantId, namespaceId, "WaveDataTarget_SampleType");
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
         }
         try {
-            System.out.println("integerTargetTypeId: " + typesClient.getType(tenantId, namespaceId, integerTargetTypeId));
+            typesClient.deleteType(tenantId, namespaceId, "WaveData_IntegerType");
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
         }
         try {
-            System.out.println("compoundTypeId: " + typesClient.getType(tenantId, namespaceId, compoundTypeId));
+            typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
+        } catch (SdsError e) {
+            if (!silent)
+                handleException(e);
+        }
+        try {
+            typesClient.deleteType(tenantId, namespaceId, integerTargetTypeId);
+        } catch (SdsError e) {
+            if (!silent)
+                handleException(e);
+        }
+        try {
+            typesClient.deleteType(tenantId, namespaceId, compoundTypeId);
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
