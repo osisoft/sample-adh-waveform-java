@@ -87,7 +87,7 @@ public class Program {
                 System.out.println();
                 System.out.println("Cleaning up");
                 cleanUp(typesClient, streamsClient, true);
-                System.out.println("done");
+                System.out.println("Initial Cleaning Done");
             } catch (SdsError e) {
             }
         }
@@ -643,8 +643,8 @@ public class Program {
                 // Step 25
                 System.out.println();
                 System.out.println("Cleaning up");
-                cleanUp(typesClient, streamsClient, false);
-                System.out.println("done");
+                cleanUp(typesClient, streamsClient, true);
+                System.out.println("Done");
             } catch (SdsError e) {
                 printError("Error deleting the Sds Objects", e);
                 handleException(e);
@@ -974,7 +974,7 @@ public class Program {
     }
 
     public static void cleanUp(TypesClient typesClient, StreamsClient streamsClient, Boolean silent) throws SdsError {
-        System.out.println("Deleting the stream");
+        System.out.println("Deleting the streams");
         try {
             streamsClient.deleteStream(tenantId, namespaceId, sampleStreamId);
         } catch (SdsError e) {
@@ -994,7 +994,7 @@ public class Program {
                 handleException(e);
         }
  
-        System.out.println("Deleting the streamViews");
+        System.out.println("Deleting the stream views");
         try {
             streamsClient.deleteStreamView(tenantId, namespaceId, sampleStreamViewId);
         } catch (SdsError e) {
@@ -1010,13 +1010,13 @@ public class Program {
 
         System.out.println("Deleting the types");
         try {
-            typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
+            typesClient.deleteType(tenantId, namespaceId, targetTypeId);
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
         }
         try {
-            typesClient.deleteType(tenantId, namespaceId, targetTypeId);
+            typesClient.deleteType(tenantId, namespaceId, sampleTypeId);
         } catch (SdsError e) {
             if (!silent)
                 handleException(e);
