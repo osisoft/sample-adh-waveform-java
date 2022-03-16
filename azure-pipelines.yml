@@ -29,7 +29,7 @@ resources:
       endpoint: osisoft/OSI-Samples
     - repository: library
       type: github
-      name: osisoft/sample-ocs-sample_libraries-java
+      name: osisoft/sample-adh-sample_libraries-java
       endpoint: osisoft/OSI-Samples
 
 variables:
