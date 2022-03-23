@@ -2,8 +2,14 @@ package com.github.osisoft.sdsjava;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,6 +19,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import com.github.osisoft.ocs_sample_library_preview.*;
@@ -971,6 +978,26 @@ public class Program {
     public static void handleException(SdsError e) {
         success = false;
         e.printStackTrace();
+    }
+
+    public static void getStreamViews() {
+        URL discoveryUrl;
+        try {
+            discoveryUrl = new URL("http://localhost:5590/api/v1/Tenants/default/Namespaces/default/StreamViews");
+            URLConnection request = discoveryUrl.openConnection();
+            request.connect();
+            JsonArray rootObj = JsonParser
+                    .parseReader(new InputStreamReader((InputStream) request.getContent(), StandardCharsets.UTF_8))
+                    .getAsJsonArray();
+
+            System.out.println(rootObj);
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public static void cleanUp(TypesClient typesClient, StreamsClient streamsClient, Boolean silent) throws SdsError {
