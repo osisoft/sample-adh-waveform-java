@@ -76,6 +76,9 @@ public class Program {
             EDSClient edsClient = new EDSClient(appsettings.getApiVersion(), appsettings.getResource());
             typesClient = edsClient.Types;
             streamsClient = edsClient.Streams;
+
+            System.out.println("Stream Views");
+            getStreamViews();
         } else {
             ADHClient adhClient = new ADHClient(appsettings.getApiVersion(), 
                                                 appsettings.getTenantId(), 
