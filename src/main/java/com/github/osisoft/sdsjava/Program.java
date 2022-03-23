@@ -18,6 +18,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -78,7 +79,7 @@ public class Program {
             streamsClient = edsClient.Streams;
 
             System.out.println("Stream Views");
-            getStreamViews();
+            getStreamViews(edsClient);
         } else {
             ADHClient adhClient = new ADHClient(appsettings.getApiVersion(), 
                                                 appsettings.getTenantId(), 
@@ -983,7 +984,7 @@ public class Program {
         e.printStackTrace();
     }
 
-    public static void getStreamViews() {
+    public static void getStreamViews(EDSClient edsClient) {
         URL discoveryUrl;
         try {
             discoveryUrl = new URL("http://localhost:5590/api/v1/Tenants/default/Namespaces/default/StreamViews");
@@ -994,10 +995,18 @@ public class Program {
                     .getAsJsonArray();
 
             System.out.println(rootObj);
+
+            for (int i = 0; i < rootObj.size(); i++) {
+                JsonElement streamView = rootObj.get(i);
+                edsClient.Streams.deleteStreamView("default", "default", streamView.getAsJsonObject().get("Id").getAsString());
+            }
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SdsError e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
