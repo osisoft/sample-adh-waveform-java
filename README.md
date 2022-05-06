@@ -51,7 +51,7 @@ The sample library specifies to use `gzip` compression by adding the `Accept-Enc
 
 Included in the sample is a configuration file with placeholders that need to be replaced with the proper values. They include information for authentication, connecting to the SDS Service, and pointing to a namespace.
 
-### Aveva Data Hub
+### AVEVA Data Hub
 
 The SDS Service is secured using Azure Active Directory. The sample application is an example of a _confidential client_. Confidential clients provide an application ID and secret that are authenticated against the directory. These are referred to as client IDs and client secrets, which are associated with a given tenant. The steps necessary to create a new client ID and secret are described below.
 
