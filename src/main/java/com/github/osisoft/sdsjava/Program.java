@@ -506,7 +506,7 @@ public class Program {
                 // searching the community
                 System.out.println();
                 System.out.println("Searching the community");
-                ArrayList<StreamSearchResult> communityStreams = communitiesClient.getCommunityStreams(tenantId, communityId, sampleStreamId);
+                ArrayList<StreamSearchResult> communityStreams = communitiesClient.getCommunityStreams(communityId, sampleStreamId);
                 System.out.println("Found matching streams:");
                 for (StreamSearchResult s : communityStreams) {
                     System.out.println(s.getId());
