@@ -39,7 +39,7 @@ variables:
 
 parameters:
   - name: containerDemandsEDS
-    default: 1 -equals 1
+    default: Agent.OS
 
 jobs:
   - job: Tests_ADH
