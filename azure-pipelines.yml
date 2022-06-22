@@ -37,6 +37,10 @@ variables:
   - name: analysisProject
     value: SDS_Java
 
+parameters:
+  - name: containerDemandsEDS
+    default: Agent.OS
+
 jobs:
   - job: Tests_ADH
     strategy:
@@ -84,6 +88,7 @@ jobs:
   - job: Tests_EDS
     pool:
       name: 00-OSIManaged-Build
+      demands: ${{ parameters.containerDemandsEDS }}
     variables:
       - name: TenantId
         value: default

@@ -1,5 +1,9 @@
 # Version History
 
+## 1.2.7 / 2022-06-15
+
+- Parameterize EDS Azure Pipeline container demands
+
 ## 1.2.6 / 2022-06-08
 
 - Update community calls to reflect changes to library
