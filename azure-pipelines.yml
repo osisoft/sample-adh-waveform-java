@@ -43,6 +43,7 @@ parameters:
 
 jobs:
   - job: Tests_ADH
+    condition: ne(variables['Build.Reason'], 'Schedule')
     strategy:
       maxParallel: 1 # Avoid conflicts in ADH
       matrix:
@@ -86,6 +87,7 @@ jobs:
         displayName: 'Run tests'
 
   - job: Tests_EDS
+    condition: ne(variables['Build.Reason'], 'Schedule')
     pool:
       name: 00-OSIManaged-Build
       demands: ${{ parameters.containerDemandsEDS }}
