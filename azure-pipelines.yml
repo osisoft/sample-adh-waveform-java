@@ -38,11 +38,20 @@ variables:
     value: SDS_Java
 
 parameters:
+  - name: poolADH
+    default: 00-OSIManaged-Containers
+  - name: containerDemandsADH
+    type: object
+    default: ['Agent.OS -equals $(agentOS)']
+  - name: poolEDS
+    default: 00-OSIManaged-Build
   - name: containerDemandsEDS
-    default: Agent.OS
+    type: object
+    default: ['Agent.OS']
 
 jobs:
   - job: Tests_ADH
+    condition: ne(variables['Build.Reason'], 'Schedule')
     strategy:
       maxParallel: 1 # Avoid conflicts in ADH
       matrix:
@@ -51,8 +60,8 @@ jobs:
         windows:
           agentOS: Windows_NT
     pool:
-      name: 00-OSIManaged-Containers
-      demands: Agent.OS -equals $(agentOS)
+      name: ${{ parameters.poolADH }}
+      demands: ${{ parameters.containerDemandsADH }}
     steps:
       - checkout: self
         path: 's'
@@ -86,8 +95,9 @@ jobs:
         displayName: 'Run tests'
 
   - job: Tests_EDS
+    condition: ne(variables['Build.Reason'], 'Schedule')
     pool:
-      name: 00-OSIManaged-Build
+      name: ${{ parameters.poolEDS }}
       demands: ${{ parameters.containerDemandsEDS }}
     variables:
       - name: TenantId
