@@ -1,6 +1,6 @@
 # Sequential Data Store Java Sample
 
-**Version:** 1.2.10
+**Version:** 1.2.11
 
 [![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/ADH/aveva.sample-adh-waveform-java?branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2629&branchName=main)
 
