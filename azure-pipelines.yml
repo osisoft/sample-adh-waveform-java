@@ -21,25 +21,24 @@ resources:
   repositories:
     - repository: OpsGuildAutomationRepo
       type: git
-      name: Engineering/OpsGuild.Automation
+      name: DevOps/opsguild.automation
       ref: refs/heads/main
     - repository: templates
       type: github
-      name: osisoft/OSI-Samples
-      endpoint: osisoft/OSI-Samples
+      name: AVEVA/AVEVA-Samples
+      endpoint: AVEVA
     - repository: library
       type: github
       name: osisoft/sample-adh-sample_libraries-java
-      endpoint: osisoft/OSI-Samples
+      endpoint: AVEVA
 
 variables:
-  - template: '/miscellaneous/build_templates/variables.yml@templates'
   - name: analysisProject
     value: SDS_Java
 
 parameters:
   - name: poolADH
-    default: 00-OSIManaged-Containers
+    default: DevOps Managed Containers Build
   - name: containerDemandsADH
     type: object
     default: ['Agent.OS -equals $(agentOS)']
