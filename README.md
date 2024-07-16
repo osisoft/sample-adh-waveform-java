@@ -2,7 +2,7 @@
 
 **Version:** 1.2.11
 
-[![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/ADH/aveva.sample-adh-waveform-java?branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=2629&branchName=main)
+[![Build Status](https://dev.azure.com/AVEVA-VSTS/Cloud%20Platform/_apis/build/status%2Fproduct-readiness%2FADH%2FAVEVA.sample-adh-waveform-java?repoName=AVEVA%2Fsample-adh-waveform-java&branchName=main)](https://dev.azure.com/AVEVA-VSTS/Cloud%20Platform/_build/latest?definitionId=16150&repoName=AVEVA%2Fsample-adh-waveform-java&branchName=main)
 
 The sample code described in this topic demonstrates how to use Java to store and retrieve data from SDS using only the SDS REST API. By examining the code, you will see how to establish a connection to SDS, obtain an authorization token, obtain an SdsNamespace, create an SdsType and SdsStream, and how to create, read, update, and delete values in SDS.
 
@@ -48,11 +48,11 @@ The sample library specifies to use `gzip` compression by adding the `Accept-Enc
 
 Included in the sample is a configuration file with placeholders that need to be replaced with the proper values. They include information for authentication, connecting to the SDS Service, and pointing to a namespace.
 
-### AVEVA Data Hub
+### CONNECT data services
 
 The SDS Service is secured using Azure Active Directory. The sample application is an example of a _confidential client_. Confidential clients provide an application ID and secret that are authenticated against the directory. These are referred to as client IDs and client secrets, which are associated with a given tenant. The steps necessary to create a new client ID and secret are described below.
 
-First, log on to the [Data Hub Portal](https://datahub.connect.aveva.com) as a user with the Tenant Admission role, and navigate to the `Clients` page under the `Security` tab, which is situated along the left side of the webpage. Three types of clients may be created; we will use a `client-credentials` client in this sample, but for the complete explanation all of three types consult the [AVEVA Data Hub clients](https://docs.osisoft.com/bundle/data-hub/page/set-up/clients/clients-concept.html) documentation. 
+First, log on to the [Data Hub Portal](https://datahub.connect.aveva.com) as a user with the Tenant Admission role, and navigate to the `Clients` page under the `Security` tab, which is situated along the left side of the webpage. Three types of clients may be created; we will use a `client-credentials` client in this sample, but for the complete explanation all of three types consult the [CONNECT data services clients](https://docs.osisoft.com/bundle/data-hub/page/set-up/clients/clients-concept.html) documentation. 
 
 To create a new client, click on the `+ Add Client` button along the top, and select the desired roles for this client. This sample program covers data creation, deletion, and retrieval, so a role or roles with Read, Write, and Delete permissions on the streams collection and individual streams will be necessary. It is encouraged to not use the Tenant Administrator role for a client if possible, but that is an existing role with the necessary permissions for this sample. Tenant Contributor is a role that by default has Read and Write permissions to the necessary collections, so if deletions are not desired, it is recommended to skip those steps in the sample rather than elevating the client in order to follow along.
 
@@ -341,6 +341,6 @@ adhClient.Types.deleteType(tenantId, namespaceId, sampleTypeId);
 
 Tested against Maven 3.6.1 and Java 1.8.0_212.
 
-For the main ADH waveform samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS/blob/main/docs/SDS_WAVEFORM.md)  
-For the main ADH samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS)  
-For the main AVEVA samples page [ReadMe](https://github.com/osisoft/OSI-Samples)
+For the main Cds waveform samples page [ReadMe](https://github.com/AVEVA/AVEVA-Samples-CloudOperations/blob/main/docs/SDS_WAVEFORM.md)  
+For the main Cds samples page [ReadMe](https://github.com/AVEVA/AVEVA-Samples-CloudOperations)  
+For the main AVEVA samples page [ReadMe](https://github.com/AVEVA/AVEVA-Samples)
