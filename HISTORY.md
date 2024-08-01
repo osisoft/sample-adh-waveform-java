@@ -48,7 +48,7 @@
 
 ## 1.2.0 / 2022-01-27
 
-- Updated for AVEVA Data Hub
+- Updated for CONNECT data services
 - Updated dependencies
 
 ## 1.1.6 / 2022-01-13
